@@ -28,7 +28,7 @@ public class User {
   private String email;
   private String password;
 
-  private Integer bestScore;
+  private Integer bestScore = 0;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
