@@ -7,6 +7,8 @@ import com.br.mastermind.api.dto.AuthResponseDTO;
 import com.br.mastermind.api.dto.LoginRequestDTO;
 import com.br.mastermind.api.dto.RegisterRequestDTO;
 import com.br.mastermind.api.entity.User;
+import com.br.mastermind.api.infra.exception.EmailAlreadyExistsException;
+import com.br.mastermind.api.infra.exception.InvalidCredentialsException;
 import com.br.mastermind.api.infra.security.config.JwtUtil;
 import com.br.mastermind.api.repository.UserRepository;
 
@@ -42,12 +44,12 @@ public class AuthService {
   public AuthResponseDTO login(LoginRequestDTO request) {
 
     User user = userRepository.findByEmail(request.getEmail())
-      .orElseThrow(() -> new RuntimeException("Credenciais inválidas"));
+      .orElseThrow(() -> new EmailAlreadyExistsException("Email já cadastrado"));
         
     boolean isMatch = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
     if(!isMatch) {
-      throw new IllegalArgumentException("Credenciais inválidas");
+      throw new InvalidCredentialsException("Credenciais inválidas");
     }
 
     String token = jwtUtil.generateToken(user.getName(), user.getEmail());
