@@ -3,6 +3,8 @@ package com.br.mastermind.api.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.ColumnTransformer;
+
 import com.br.mastermind.api.enums.MatchStatus;
 
 import jakarta.persistence.*;
@@ -34,6 +36,7 @@ public class Match {
   private Integer attemptCount = 0;
 
   @Column(columnDefinition = "jsonb", nullable = false)
+  @ColumnTransformer(write = "?::jsonb")
   private String attempts;
 
   @Enumerated(EnumType.STRING)
@@ -42,6 +45,7 @@ public class Match {
   private Integer score = 0;
   
   @Column(columnDefinition = "jsonb", nullable = false)
+  @ColumnTransformer(write = "?::jsonb")
   private String responseExpected;
 
   private LocalDateTime startedAt;
