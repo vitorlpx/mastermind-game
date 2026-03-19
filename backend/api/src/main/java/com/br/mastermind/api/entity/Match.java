@@ -1,6 +1,7 @@
 package com.br.mastermind.api.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.br.mastermind.api.enums.MatchStatus;
 
@@ -24,11 +25,13 @@ public class Match {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private java.util.UUID secretCode;
+  private UUID secretCode;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
+
+  private Integer attemptCount = 0;
 
   @Column(columnDefinition = "jsonb", nullable = false)
   private String attempts;
@@ -36,7 +39,9 @@ public class Match {
   @Enumerated(EnumType.STRING)
   private MatchStatus status;
 
-  private Integer score;
+  private Integer score = 0;
+  
+  @Column(columnDefinition = "jsonb", nullable = false)
   private String responseExpected;
 
   private LocalDateTime startedAt;
@@ -45,7 +50,7 @@ public class Match {
   @PrePersist
   public void prePersist() {
     this.startedAt = LocalDateTime.now();
-    this.secretCode = java.util.UUID.randomUUID();
+    this.secretCode = UUID.randomUUID();
     this.status = MatchStatus.IN_PROGRESS;
     this.attempts = "[]";
   }
