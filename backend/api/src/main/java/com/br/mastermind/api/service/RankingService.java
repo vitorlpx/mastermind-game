@@ -10,8 +10,10 @@ import com.br.mastermind.api.entity.User;
 import com.br.mastermind.api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RankingService {
   
@@ -19,12 +21,14 @@ public class RankingService {
 
   public List<RankingResponseDTO> getRanking() {
     List<User> users = userRepository.findAllByOrderByBestScoreDesc();
+    log.info(">>> INFO: Recuperando ranking de usuários: {}", users.size());
 
     List<RankingResponseDTO> ranking = users.stream().map(user -> new RankingResponseDTO(
       user.getName(),
       user.getEmail(),
       user.getBestScore() != null ? user.getBestScore() : 0
     )).collect(Collectors.toList());
+    log.info(">>> INFO: Ranking formatado para resposta: {}", ranking.size());
 
     return ranking;
   }
