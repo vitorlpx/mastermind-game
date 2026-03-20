@@ -13,8 +13,10 @@ import com.br.mastermind.api.infra.security.config.JwtUtil;
 import com.br.mastermind.api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -25,6 +27,7 @@ public class AuthService {
   public AuthResponseDTO register(RegisterRequestDTO request) {
 
     if(userRepository.findByEmail(request.getEmail()).isPresent()) {
+      log.error(">>> ERROR: Tentativa de registro com email já existente: {}", request.getEmail());
       throw new RuntimeException("Email já cadastrado");
     }
 
@@ -35,8 +38,10 @@ public class AuthService {
     user.setPassword(passwordEncoder.encode(request.getPassword()));
 
     userRepository.save(user);
+    log.info(">>> INFO: Novo usuário registrado: {}", request.getEmail());
 
     String token = jwtUtil.generateToken(request.getName(), request.getEmail());
+    log.info(">>> INFO: Token gerado para usuário {}: {}", request.getEmail(), token);
 
     return new AuthResponseDTO(token);
   }
@@ -44,15 +49,19 @@ public class AuthService {
   public AuthResponseDTO login(LoginRequestDTO request) {
 
     User user = userRepository.findByEmail(request.getEmail())
-      .orElseThrow(() -> new EmailAlreadyExistsException("Email já cadastrado"));
+    .orElseThrow(() -> new EmailAlreadyExistsException("Email já cadastrado"));
+    log.info(">>> INFO: Tentativa de login para usuário {}: {}", request.getEmail(), user.getName());
         
     boolean isMatch = passwordEncoder.matches(request.getPassword(), user.getPassword());
+    log.info(">>> INFO: Senha fornecida para usuário {}: {}", request.getEmail(), user.getName());
 
     if(!isMatch) {
+      log.error(">>> ERROR: Senha incorreta para usuário {}: {}", request.getEmail(), user.getName());
       throw new InvalidCredentialsException("Credenciais inválidas");
     }
 
     String token = jwtUtil.generateToken(user.getName(), user.getEmail());
+    log.info(">>> INFO: Token gerado para usuário {}: {}", request.getEmail(), token);
     
     return new AuthResponseDTO(token);
   }

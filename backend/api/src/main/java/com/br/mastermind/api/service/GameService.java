@@ -23,8 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class GameService {
 
@@ -40,18 +42,23 @@ public class GameService {
     
     // Verificar se o usuário existe
     User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    log.info(">>> INFO: Iniciando nova partida para usuário {}: {}", email, user.getName());
 
     // Gerar a combinação secreta
     List<String> secret = new ArrayList<>(COLOR_POOL);
 
     Collections.shuffle(secret);
+    log.info(">>> INFO: Pool de cores definidas para combinação secreta: {}", secret);
+
 
     // Criar a partida
     Match match = new Match();
   
     try {
       match.setResponseExpected(objectMapper.writeValueAsString(secret.subList(0, 4)));
+      log.info(">>> INFO: Combinação secreta gerada para partida: {}", match.getResponseExpected());
     } catch (JsonProcessingException e) {
+      log.error(">>> ERROR: Erro ao processar a combinação secreta para partida: {}", e.getMessage());
       throw new RuntimeException("Erro ao processar a combinação secreta");
     }
     
@@ -59,6 +66,8 @@ public class GameService {
     match.setUser(user);
 
     matchRepository.save(match);
+    log.info(">>> INFO: Nova partida criada para usuário {}: {}", email, user.getName());
+
 
     return new MatchResponseDTO(match.getSecretCode(), match.getStatus()); 
   }
@@ -68,10 +77,12 @@ public class GameService {
     
     Match match = matchRepository.findBySecretCode(UUID.fromString(matchId))
       .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada"));
+    log.info(">>> INFO: Partida encontrada pelo ID {}: {}", matchId, match.getId());
 
     User user = match.getUser();
 
     if (!match.getStatus().equals(MatchStatus.IN_PROGRESS)) {
+      log.error(">>> ERROR: Partida não está em andamento: {}", match.getId());
       throw new RuntimeException("Partida não está em andamento");
     }
 
@@ -84,6 +95,7 @@ public class GameService {
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Erro ao processar a combinação secreta");
     }
+    log.info(">>> INFO: Combinação secreta recuperada para partida {}: {}", match.getId(), secretCode);
 
     int hits = 0;
     for (int i = 0; i < secretCode.size(); i++) {
@@ -91,6 +103,7 @@ public class GameService {
         hits++;
       }
     }
+    log.info(">>> INFO: Tentativa recebida para partida {}: {}, Hits: {}", match.getId(), guessRequest.getColors(), hits);
 
     match.setAttemptCount(match.getAttemptCount() + 1);
 
@@ -101,7 +114,9 @@ public class GameService {
         );
       history.add(guessRequest.getColors());
       match.setAttempts(objectMapper.writeValueAsString(history));
+      log.info(">>> INFO: Tentativas atualizadas para partida {}: {}", match.getId(), match.getAttempts());
     } catch (JsonProcessingException e) {
+        log.error(">>> ERROR: Erro ao atualizar tentativas para partida {}: {}", match.getId(), e.getMessage());
         throw new RuntimeException("Erro ao atualizar tentativas");
     }
 
@@ -112,19 +127,23 @@ public class GameService {
       match.setScore(score);
       match.setStatus(MatchStatus.WON);
       match.setFinishedAt(LocalDateTime.now());
+      log.info(">>> INFO: Partida {} finalizada com vitória: Score: {}, Tentativas restantes: {}", match.getId(), score, remainingAttempts);
 
       if (score > user.getBestScore()) {
         user.setBestScore(score);
         userRepository.save(user);
+        log.info(">>> INFO: Novo recorde para usuário {}: {}", user.getEmail(), user.getBestScore());
       }
     }
 
     if (match.getAttemptCount() >= 10) {
       match.setStatus(MatchStatus.LOST);
       match.setFinishedAt(LocalDateTime.now());
+      log.info(">>> INFO: Partida {} finalizada por atingir o número máximo de tentativas", match.getId());
     }
 
     matchRepository.save(match);
+    log.info(">>> INFO: Partida {} atualizada após tentativa: Status: {}, Tentativas: {}", match.getId(), match.getStatus(), match.getAttemptCount());
 
     return new GuessResponseDTO(hits, match.getScore(), match.getStatus());
   }
