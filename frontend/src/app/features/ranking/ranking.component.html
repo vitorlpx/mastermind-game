@@ -1,0 +1,106 @@
+<header class="dashboard-header">
+  <div class="header-brand">
+    <svg class="brand-icon" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+      <path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+    </svg>
+    <span class="brand-name">MASTERMIND PRO</span>
+  </div>
+
+  <div class="header-actions">
+    <div class="user-badge">
+      <div class="user-avatar">{{ userName.charAt(0) }}</div>
+      <span class="user-name">{{ userName }}</span>
+    </div>
+    <button class="btn-logout" (click)="openLogoutModal()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="ranking-main">
+
+  <div class="ranking-header">
+    <div>
+      <h1>Global <span class="accent-text">Ranking</span></h1>
+      <p>The best players of Mastermind Pro</p>
+    </div>
+    <a routerLink="/dashboard" class="btn-back">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+      Dashboard
+    </a>
+  </div>
+
+  <!-- Lista vazia -->
+  <div class="empty-state glass-panel" *ngIf="ranking.length === 0">
+    <p>Nenhum jogador no ranking ainda. Seja o primeiro!</p>
+  </div>
+
+  <!-- Tabela de ranking -->
+  <div class="ranking-panel glass-panel" *ngIf="ranking.length > 0">
+    <div class="ranking-table-header">
+      <span>#</span>
+      <span>Jogador</span>
+      <span>Melhor Pontuação</span>
+    </div>
+
+    <div
+      class="ranking-item"
+      *ngFor="let player of ranking; let i = index"
+      [class.current-user]="isCurrentUser(player.email)"
+      [class.top-one]="i === 0"
+      [class.top-two]="i === 1"
+      [class.top-three]="i === 2">
+
+      <!-- Posição -->
+      <span class="position" [class.accent-text]="i === 0">
+        {{ (i + 1).toString().padStart(2, '0') }}
+      </span>
+
+      <!-- Avatar e nome -->
+      <div class="player-info">
+        <div class="player-avatar" [class.avatar-gold]="i === 0">
+          {{ player.name.charAt(0).toUpperCase() }}
+        </div>
+        <div>
+          <p class="player-name">
+            {{ player.name }}
+            <span class="you-badge" *ngIf="isCurrentUser(player.email)">YOU</span>
+          </p>
+          <p class="player-email">{{ player.email }}</p>
+        </div>
+      </div>
+
+      <!-- Score -->
+      <span class="player-score" [class.accent-text]="i === 0">
+        {{ player.score }} pts
+      </span>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- Modal: Logout -->
+<div class="modal-overlay" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-icon logout-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+    </div>
+    <h3>Tem certeza que deseja sair?</h3>
+    <p>Sua sessão atual será encerrada e você precisará fazer login novamente.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeLogoutModal()">Cancelar</button>
+      <button class="btn-confirm btn-danger" (click)="confirmLogout()">Sair</button>
+    </div>
+  </div>
+</div>
