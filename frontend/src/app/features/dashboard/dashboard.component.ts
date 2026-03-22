@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit {
   private rankingService = inject(RankingService);
   private router = inject(Router);
 
-  userName = '';
+  userName: string = '';
   email: string = (this.authService.getEmail() ?? '').trim().toLowerCase();
   bestScore = 0;
   ranking: RankingResponse[] = [];
@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit {
 
   showStartModal = false;
   isStartingGame = false;
+  showLogoutModal = false;
 
   openStartModal() {
     this.showStartModal = true;
@@ -69,8 +70,6 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-
-  showLogoutModal = false;
 
   openLogoutModal() { this.showLogoutModal = true; }
   closeLogoutModal() { this.showLogoutModal = false; }
