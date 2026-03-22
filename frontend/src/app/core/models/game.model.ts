@@ -5,7 +5,7 @@ export interface GuessRequest {
 }
 
 export interface GuessResponse {
-  hits: number;
+  feedback: string[];
   score: number;
   status: MatchStatus;
 }
@@ -19,4 +19,11 @@ export interface RankingResponse {
   name: string;
   email: string;
   score: number;
+}
+
+export interface BoardRow {
+  colors: string[];      
+  feedback: string[];
+  score: number;  
+  submitted: boolean;
 }
