@@ -10,6 +10,7 @@ import lombok.Getter;
 public class GuessResponseDTO {
   
   private int hits;
+  private int nearMisses;
   private int score;
   private MatchStatus status;
 
