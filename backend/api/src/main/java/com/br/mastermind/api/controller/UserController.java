@@ -23,6 +23,6 @@ public class UserController {
   public ResponseEntity<UserProfileDTO> getProfile(Authentication authentication) {
     UserProfileDTO profile = userService.getProfile(authentication.getName());
     return ResponseEntity.status(HttpStatus.OK).body(profile);
-}
+  }
 
 }
