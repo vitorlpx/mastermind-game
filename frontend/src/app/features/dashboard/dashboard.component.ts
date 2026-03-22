@@ -27,6 +27,7 @@ export class DashboardComponent implements OnInit {
   private router = inject(Router);
 
   userName = '';
+  email: string = (this.authService.getEmail() ?? '').trim().toLowerCase();
   bestScore = 0;
   ranking: RankingResponse[] = [];
   matchHistory: MatchHistory[] = [];
@@ -61,6 +62,10 @@ export class DashboardComponent implements OnInit {
     this.userService.getMatchHistory().subscribe({
       next: (history) => {
         this.matchHistory = history;
+      },
+      error: (err) => {
+        console.error('Erro ao buscar histórico de partidas:', err);
+        this.matchHistory = [];
       }
     });
   }
@@ -94,5 +99,9 @@ export class DashboardComponent implements OnInit {
     if (this.matchHistory.length === 0) return 0;
     const wins = this.matchHistory.filter(m => m.status === MatchStatus.WON).length;
     return Math.round((wins / this.matchHistory.length) * 100);
+  }
+
+  isCurrentUser(playerEmail: string): boolean {
+    return !!this.email && playerEmail.trim().toLowerCase() === this.email;
   }
 }
