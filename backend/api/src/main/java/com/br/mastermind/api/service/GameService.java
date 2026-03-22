@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class GameService {
 
-  private static final List<String> COLOR_POOL = List.of("RED", "BLUE", "GREEN", "YELLOW");
+  private static final List<String> COLOR_POOL = List.of("RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "PURPLE");
 
   private final UserRepository userRepository;
   private final MatchRepository matchRepository;
@@ -72,7 +73,7 @@ public class GameService {
   public GuessResponseDTO submitGuess(String matchId, GuessRequestDTO guessRequest) {
 
     Match match = matchRepository.findBySecretCode(UUID.fromString(matchId))
-      .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada"));
+        .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada"));
     log.info(">>> INFO: Partida encontrada pelo ID {}: {}", matchId, match.getId());
 
     User user = match.getUser();
@@ -85,29 +86,21 @@ public class GameService {
     List<String> secretCode;
     try {
       secretCode = objectMapper.readValue(
-        match.getResponseExpected(),
-        new TypeReference<List<String>>() {}
-      );
+          match.getResponseExpected(),
+          new TypeReference<List<String>>() {
+          });
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Erro ao processar a combinação secreta");
     }
     log.info(">>> INFO: Combinação secreta recuperada para partida {}: {}", match.getId(), secretCode);
 
-    int hits = 0;
-    for (int i = 0; i < secretCode.size(); i++) {
-      if (secretCode.get(i).equals(guessRequest.getColors().get(i))) {
-        hits++;
-      }
-    }
-    log.info(">>> INFO: Tentativa recebida para partida {}: {}, Hits: {}", match.getId(), guessRequest.getColors(), hits);
-
     match.setAttemptCount(match.getAttemptCount() + 1);
 
     try {
       List<List<String>> history = objectMapper.readValue(
-      match.getAttempts(),
-        new TypeReference<List<List<String>>>() {}
-      );
+          match.getAttempts(),
+          new TypeReference<List<List<String>>>() {
+          });
 
       history.add(guessRequest.getColors());
       match.setAttempts(objectMapper.writeValueAsString(history));
@@ -117,23 +110,32 @@ public class GameService {
       throw new RuntimeException("Erro ao atualizar tentativas");
     }
 
+    String[] feedback = new String[4];
+
     List<String> remainingSecret = new ArrayList<>(secretCode);
     List<String> remainingGuess = new ArrayList<>(guessRequest.getColors());
 
-    for (int i = secretCode.size() - 1; i >= 0; i--) {
+    for (int i = 0; i < secretCode.size(); i++) {
       if (secretCode.get(i).equals(guessRequest.getColors().get(i))) {
-        remainingSecret.remove(i);
-        remainingGuess.remove(i);
+        feedback[i] = "hit";
+        remainingSecret.set(i, null);
+        remainingGuess.set(i, null);
       }
     }
 
-    int nearMisses = 0;
-    for (String color : remainingGuess) {
-      if (remainingSecret.contains(color)) {
-        remainingSecret.remove(color);
-        nearMisses++;
+    for (int i = 0; i < 4; i++) {
+      if (feedback[i] != null)
+        continue;
+      String guessColor = remainingGuess.get(i);
+      if (guessColor != null && remainingSecret.contains(guessColor)) {
+        feedback[i] = "near";
+        remainingSecret.set(remainingSecret.indexOf(guessColor), null);
+      } else {
+        feedback[i] = "empty";
       }
     }
+
+    int hits = (int) Arrays.stream(feedback).filter(f -> "hit".equals(f)).count();
 
     if (hits == 4) {
       int remainingAttempts = 10 - match.getAttemptCount();
@@ -142,7 +144,8 @@ public class GameService {
       match.setScore(score);
       match.setStatus(MatchStatus.WON);
       match.setFinishedAt(LocalDateTime.now());
-      log.info(">>> INFO: Partida {} finalizada com vitória: Score: {}, Tentativas restantes: {}", match.getId(), score, remainingAttempts);
+      log.info(">>> INFO: Partida {} finalizada com vitória: Score: {}, Tentativas restantes: {}", match.getId(), score,
+          remainingAttempts);
 
       if (score > user.getBestScore()) {
         user.setBestScore(score);
@@ -159,8 +162,8 @@ public class GameService {
 
     matchRepository.save(match);
     log.info(">>> INFO: Partida {} atualizada após tentativa: Status: {}, Tentativas: {}", match.getId(),
-      match.getStatus(), match.getAttemptCount());
+        match.getStatus(), match.getAttemptCount());
 
-    return new GuessResponseDTO(hits, nearMisses, match.getScore(), match.getStatus());
+    return new GuessResponseDTO(Arrays.asList(feedback), match.getScore(), match.getStatus());
   }
 }
