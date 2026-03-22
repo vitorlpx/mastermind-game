@@ -43,6 +43,16 @@ export class AuthService {
     return decoded.name;  
   }
 
+  public getEmail(): string | null {
+    const token = this.getToken();
+    
+    if (!token) return null;
+
+    const decoded = jwtDecode<{ email?: string; sub?: string; preferred_username?: string }>(token);
+
+    return decoded.email ?? decoded.sub ?? decoded.preferred_username ?? null;
+  }
+
   public isAuthenticated(): boolean {
     return !!localStorage.getItem(this.TOKEN_KEY);
   }
