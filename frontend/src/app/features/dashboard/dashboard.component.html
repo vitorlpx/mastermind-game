@@ -69,11 +69,15 @@
       </div>
       <div class="ranking-list">
         <div class="ranking-item" *ngFor="let player of ranking.slice(0, 4); let i = index"
-          [class.ranking-first]="i === 0">
+          [class.ranking-first]="i === 0"
+          [class.current-user]="isCurrentUser(player.email)">
           <span class="ranking-position">{{ (i + 1).toString().padStart(2, '0') }}</span>
           <div class="ranking-avatar">{{ player.name.charAt(0) }}</div>
           <div class="ranking-info">
-            <p class="ranking-name">{{ player.name }}</p>
+            <p class="ranking-name">
+              {{ player.name }}
+              <span class="you-badge" *ngIf="isCurrentUser(player.email)">YOU</span>
+            </p>
           </div>
           <span class="ranking-score" [class.accent-text]="i === 0">{{ player.score }} pts</span>
         </div>
