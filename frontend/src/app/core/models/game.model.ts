@@ -1,8 +1,4 @@
-enum MatchStatus {
-  IN_PROGRESS = 'IN_PROGRESS',
-  WON = 'WON',
-  LOST = 'LOST'
-}
+import { MatchStatus } from '@core/enums';
 
 export interface GuessRequest {
   colors: string[];
@@ -11,7 +7,7 @@ export interface GuessRequest {
 export interface GuessResponse {
   hits: number;
   score: number;
-  status: MatchStatus; 
+  status: MatchStatus;
 }
 
 export interface MatchResponse {
