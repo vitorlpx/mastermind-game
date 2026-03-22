@@ -1,0 +1,153 @@
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { MatchStatus } from '@core/enums';
+import { BoardRow } from '@core/models/game.model';
+import { GameService } from '@core/services/game.service';
+
+@Component({
+  selector: 'app-game',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './game.component.html',
+  styleUrl: './game.component.scss'
+})
+export class GameComponent implements OnInit, OnDestroy {
+
+  readonly COLOR_POOL = ['RED', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'PURPLE'];
+
+  matchId = '';
+  board: BoardRow[] = Array.from({ length: 10 }, () => ({
+    colors: ['', '', '', ''],
+    feedback: [],
+    score: 0,
+    submitted: false
+  }));
+  currentRow = 0;
+  selectedColor = '';
+  gameOver = false;
+  gameResult: 'WON' | 'LOST' | null = null;
+  currentScore = 0;
+  errorMessage = '';
+  timer = 0;
+
+  private timerInterval: any;
+  private gameService = inject(GameService);
+
+  ngOnInit() {
+    this.matchId = localStorage.getItem('matchId') || '';
+    this.startTimer();
+  }
+
+  ngOnDestroy() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  }
+
+  startTimer() {
+    this.timerInterval = setInterval(() => {
+      if (!this.gameOver) this.timer++;
+    }, 1000);
+  }
+
+  selectColor(color: string) {
+    this.selectedColor = color;
+
+    if (this.gameOver) return;
+
+    const row = this.board[this.currentRow];
+    const emptyIndex = row.colors.indexOf('');
+
+    if (emptyIndex !== -1) {
+      row.colors[emptyIndex] = color;
+    }
+  }
+
+  removeLastColor() {
+    if (this.gameOver) return;
+
+    const row = this.board[this.currentRow];
+
+    for (let i = row.colors.length - 1; i >= 0; i--) {
+      if (row.colors[i] !== '') {
+        row.colors[i] = '';
+        break;
+      }
+    }
+  }
+
+  placeColor(rowIndex: number, colorIndex: number) {
+    if (rowIndex === this.currentRow && !this.board[rowIndex].submitted) {
+      this.board[rowIndex].colors[colorIndex] = this.selectedColor;
+    }
+  }
+
+  getColorHex(color: string): string {
+    const map: Record<string, string> = {
+      'RED': '#ef4444',
+      'BLUE': '#3b82f6',
+      'GREEN': '#22c55e',
+      'YELLOW': '#eab308',
+      'ORANGE': '#f97316',
+      'PURPLE': '#a855f7'
+    };
+    return map[color] || 'transparent';
+  }
+
+  getFeedbackDots(row: BoardRow): string[] {
+    return row.feedback.length > 0 ? row.feedback : ['empty', 'empty', 'empty', 'empty'];
+  }
+
+  isSubmitDisabled(): boolean {
+    return this.gameOver || this.board[this.currentRow]?.colors?.includes('');
+  }
+
+  isRemoveDisabled(): boolean {
+    return this.gameOver || !this.board[this.currentRow]?.colors?.some(c => c !== '');
+  }
+
+  submitGuess() {
+    const guessColors = this.board[this.currentRow].colors;
+
+    if (guessColors.includes('')) {
+      this.errorMessage = 'Preencha todas as posições antes de enviar.';
+      return;
+    }
+
+    this.errorMessage = '';
+
+    this.gameService.submitGuess(this.matchId, guessColors).subscribe({
+      next: (response) => {
+        this.board[this.currentRow].feedback = response.feedback;
+        this.board[this.currentRow].submitted = true;
+        this.currentScore = response.score;
+        this.currentRow++;
+
+        if (response.status === MatchStatus.WON) {
+          this.gameOver = true;
+          this.gameResult = 'WON';
+          clearInterval(this.timerInterval);
+          localStorage.removeItem('matchId');
+        } else if (response.status === MatchStatus.LOST) {
+          this.gameOver = true;
+          this.gameResult = 'LOST';
+          clearInterval(this.timerInterval);
+          localStorage.removeItem('matchId');
+        }
+      }
+    });
+  }
+
+  get potentialScore(): number {
+    const remaining = 10 - this.currentRow;
+    return remaining * 100;
+  }
+
+  get formattedTime(): string {
+    const minutes = Math.floor(this.timer / 60).toString().padStart(2, '0');
+    const seconds = (this.timer % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+}
