@@ -2,6 +2,10 @@
 
 Uma versão web funcional do clássico jogo Mastermind, desenvolvida como case técnico full-stack.
 
+## 🎥 Vídeo de Demonstração
+
+https://www.youtube.com/watch?v=jXqgWq09-2s
+
 ---
 
 ## 📋 Sobre o Projeto
