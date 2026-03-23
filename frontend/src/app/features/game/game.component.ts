@@ -14,9 +14,14 @@ import { GameService } from '@core/services/game.service';
 })
 export class GameComponent implements OnInit, OnDestroy {
 
-  readonly COLOR_POOL = ['RED', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'PURPLE'];
+  readonly COLOR_POOLS: Record<string, string[]> = {
+    'EASY': ['RED', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'PURPLE'],
+    'MEDIUM': ['RED', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'PURPLE', 'PINK', 'CYAN'],
+    'HARD': ['RED', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'PURPLE', 'PINK', 'CYAN', 'WHITE', 'BROWN']
+  };
 
   matchId = '';
+  difficulty = '';
   board: BoardRow[] = Array.from({ length: 10 }, () => ({
     colors: ['', '', '', ''],
     feedback: [],
@@ -36,6 +41,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.matchId = localStorage.getItem('matchId') || '';
+    this.difficulty = localStorage.getItem('difficulty') || 'EASY';
     this.startTimer();
   }
 
@@ -83,6 +89,10 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
+  get COLOR_POOL(): string[] {
+    return this.COLOR_POOLS[this.difficulty] ?? this.COLOR_POOLS['EASY'];
+  }
+
   getColorHex(color: string): string {
     const map: Record<string, string> = {
       'RED': '#ef4444',
@@ -90,7 +100,11 @@ export class GameComponent implements OnInit, OnDestroy {
       'GREEN': '#22c55e',
       'YELLOW': '#eab308',
       'ORANGE': '#f97316',
-      'PURPLE': '#a855f7'
+      'PURPLE': '#a855f7',
+      'PINK': '#ec4899',
+      'CYAN': '#06b6d4',
+      'WHITE': '#f1f5f9',
+      'BROWN': '#92400e'
     };
     return map[color] || 'transparent';
   }

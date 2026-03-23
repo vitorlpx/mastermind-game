@@ -26,14 +26,16 @@ export class DashboardComponent implements OnInit {
   private rankingService = inject(RankingService);
   private router = inject(Router);
 
-  userName = '';
+  userName: string = '';
   email: string = (this.authService.getEmail() ?? '').trim().toLowerCase();
   bestScore = 0;
   ranking: RankingResponse[] = [];
   matchHistory: MatchHistory[] = [];
+  selectedDifficulty: string = 'EASY';
 
-  showStartModal = false;
-  isStartingGame = false;
+  showStartModal: boolean = false;
+  isStartingGame: boolean = false;
+  showLogoutModal: boolean = false;
 
   openStartModal() {
     this.showStartModal = true;
@@ -70,8 +72,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  showLogoutModal = false;
-
   openLogoutModal() { this.showLogoutModal = true; }
   closeLogoutModal() { this.showLogoutModal = false; }
 
@@ -83,13 +83,13 @@ export class DashboardComponent implements OnInit {
   confirmStartGame() {
     this.isStartingGame = true;
 
-    this.gameService.startMatch().subscribe({
+    this.gameService.startMatch(this.selectedDifficulty).subscribe({
       next: (response) => {
         localStorage.setItem('matchId', response.matchId);
+        localStorage.setItem('difficulty', this.selectedDifficulty);
         this.router.navigate(['/game']);
       },
       error: () => {
-        console.error('Erro ao iniciar partida. Tente novamente.');
         this.isStartingGame = false;
       }
     });

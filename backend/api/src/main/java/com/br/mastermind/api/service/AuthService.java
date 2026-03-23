@@ -28,7 +28,7 @@ public class AuthService {
 
     if(userRepository.findByEmail(request.getEmail()).isPresent()) {
       log.error(">>> ERROR: Tentativa de registro com email já existente: {}", request.getEmail());
-      throw new RuntimeException("Email já cadastrado");
+      throw new EmailAlreadyExistsException("Email já cadastrado");
     }
 
     User user = new User();
