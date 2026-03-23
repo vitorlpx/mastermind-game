@@ -1,0 +1,102 @@
+<div class="bg-shape shape-1" aria-hidden="true"></div>
+<div class="bg-shape shape-2" aria-hidden="true"></div>
+
+<main class="login-wrapper">
+
+  <!-- Header -->
+  <div class="brand-header">
+    <div class="logo-container glass-panel">
+      <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" x2="12" y1="22.08" y2="12"></line>
+      </svg>
+    </div>
+    <h1>Mastermind Pro</h1>
+    <p>Unlock your strategic potential.</p>
+  </div>
+
+  <!-- Card -->
+  <section class="login-card glass-panel">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <div class="field-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+          </span>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="alex@email.com"
+          />
+        </div>
+        <span class="error-message" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+          Email inválido.
+        </span>
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+          </span>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+          />
+        </div>
+        <span class="error-message" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+          Senha obrigatória.
+        </span>
+      </div>
+
+      <!-- Erro geral -->
+      <span class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </span>
+
+      <!-- Submit -->
+      <button class="btn-primary" type="submit" [disabled]="isLoading || form.invalid">
+        <span>{{ isLoading ? 'Entrando...' : 'Sign In' }}</span>
+        <svg *ngIf="!isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+      </button>
+
+    </form>
+
+    <!-- Link cadastro -->
+    <div class="register-prompt">
+      <p>Don't have an account? <a routerLink="/register">Sign Up</a></p>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <p>© 2026 Mastermind Pro. Built for competitive minds.</p>
+  </footer>
+
+</main>
+
+<!-- Decoração -->
+<div class="peg-decoration" aria-hidden="true">
+  <div class="peg red"></div>
+  <div class="peg blue"></div>
+  <div class="peg green"></div>
+  <div class="peg yellow"></div>
+</div>

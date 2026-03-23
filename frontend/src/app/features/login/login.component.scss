@@ -1,0 +1,253 @@
+@use "../../../styles/variables" as *;
+
+:host {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg-primary;
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(99, 102, 241, 0.15) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(236, 72, 153, 0.1) 0%,
+      transparent 40%
+    );
+}
+
+.glass-panel {
+  background: $bg-card;
+  backdrop-filter: $glass-blur;
+  border: 1px solid $border-blue;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.brand-header {
+  text-align: center;
+  margin-bottom: 40px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: $accent-neon;
+    text-shadow: $glow-neon;
+    margin: 12px 0 8px;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: 14px;
+  }
+}
+
+.logo-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+
+  svg {
+    width: 36px;
+    height: 36px;
+    color: $accent-neon;
+  }
+}
+
+.login-card {
+  padding: 32px;
+  border-radius: 24px;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba($accent-neon, 0.6);
+    letter-spacing: 0.05em;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(15, 23, 42, 0.5);
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: $accent-neon;
+    box-shadow: $glow-blue;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 16px 12px 12px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text-primary;
+    font-size: 14px;
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: $accent-gradient;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    box-shadow: $glow-blue;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.error-message {
+  color: #f87171;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.register-prompt,
+.login-prompt {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: $text-secondary;
+
+  a {
+    color: $accent-neon;
+    font-weight: 700;
+    text-decoration: none;
+    text-shadow: $glow-neon;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.page-footer {
+  margin-top: 40px;
+  text-align: center;
+  color: $text-muted;
+  font-size: 12px;
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    a {
+      color: inherit;
+      text-decoration: none;
+      &:hover {
+        color: $accent-neon;
+      }
+    }
+  }
+}
+
+.bg-shape {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+
+  &.shape-1 {
+    width: 300px;
+    height: 300px;
+    background: #3b82f6;
+    top: -100px;
+    left: -100px;
+  }
+  &.shape-2 {
+    width: 250px;
+    height: 250px;
+    background: #ec4899;
+    bottom: -50px;
+    right: -50px;
+  }
+}
+
+.peg-decoration {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  display: flex;
+  gap: 8px;
+  opacity: 0.2;
+  pointer-events: none;
+
+  .peg {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    &.red {
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444;
+    }
+    &.blue {
+      background: #3b82f6;
+      box-shadow: 0 0 10px #3b82f6;
+    }
+    &.green {
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+    }
+    &.yellow {
+      background: #eab308;
+      box-shadow: 0 0 10px #eab308;
+    }
+  }
+}

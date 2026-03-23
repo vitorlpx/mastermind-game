@@ -1,0 +1,365 @@
+@use "../../../styles/variables" as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $bg-primary;
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(99, 102, 241, 0.1) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(236, 72, 153, 0.08) 0%,
+      transparent 40%
+    );
+  color: #e2e8f0;
+  font-family: "Inter", sans-serif;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 80px;
+  border-bottom: 1px solid $border-primary;
+  background: rgba(11, 20, 59, 0.8);
+  backdrop-filter: $glass-blur;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  color: $accent-neon;
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 900;
+  color: $accent-neon;
+  text-shadow: $glow-neon;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(28, 50, 151, 0.2);
+  border: 1px solid $border-blue;
+  border-radius: 999px;
+  padding: 4px 16px 4px 4px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $accent-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.btn-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-muted;
+  display: flex;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  &:hover {
+    color: #f87171;
+  }
+}
+
+.ranking-main {
+  flex: 1;
+  padding: 48px 80px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ranking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+
+  h1 {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  p {
+    color: $text-secondary;
+    margin-top: 4px;
+  }
+}
+
+.accent-text {
+  color: $accent-neon;
+  text-shadow: $glow-neon;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $text-secondary;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 0.2s;
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  &:hover {
+    color: $accent-neon;
+  }
+}
+
+.glass-panel {
+  background: rgba(28, 50, 151, 0.1);
+  backdrop-filter: $glass-blur;
+  border: 1px solid $border-primary;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.ranking-panel {
+  width: 100%;
+}
+
+.ranking-table-header {
+  display: grid;
+  grid-template-columns: 48px 1fr 160px;
+  padding: 12px 24px;
+  background: rgba(28, 50, 151, 0.25);
+  border-bottom: 1px solid rgba(28, 50, 151, 0.2);
+
+  span {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $text-muted;
+  }
+}
+
+.ranking-item {
+  display: grid;
+  grid-template-columns: 48px 1fr 160px;
+  align-items: center;
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(28, 50, 151, 0.1);
+  transition: background 0.2s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  &.top-one {
+    background: rgba(28, 50, 151, 0.25);
+  }
+  &.current-user {
+    background: rgba(0, 242, 255, 0.05);
+    border-left: 3px solid $accent-neon;
+  }
+}
+
+.position {
+  font-size: 16px;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.player-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1c3297, #4f46e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  border: 1px solid rgba(28, 50, 151, 0.4);
+
+  &.avatar-gold {
+    border-color: rgba(0, 242, 255, 0.5);
+  }
+}
+
+.player-name {
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.you-badge {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 242, 255, 0.15);
+  color: $accent-neon;
+  letter-spacing: 0.05em;
+}
+
+.player-email {
+  font-size: 12px;
+  color: $text-muted;
+  margin-top: 2px;
+}
+
+.player-score {
+  font-weight: 700;
+  font-size: 15px;
+  text-align: right;
+}
+
+.empty-state {
+  padding: 48px;
+  text-align: center;
+  color: $text-muted;
+  font-size: 14px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  background: #0f172a;
+  border: 1px solid $border-blue;
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 16px 0 8px;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+.modal-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  &.logout-icon {
+    background: rgba(248, 113, 113, 0.15);
+    color: #f87171;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.btn-confirm {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  border: none;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+
+  &.btn-danger {
+    background: linear-gradient(135deg, #dc2626, #9f1239);
+  }
+}
