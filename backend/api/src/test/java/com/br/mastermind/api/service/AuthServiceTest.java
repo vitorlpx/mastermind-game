@@ -44,7 +44,7 @@ class AuthServiceTest {
 
   @Test
   void shouldRegisterUserSuccessfully() {
-    // Arrange - prepara o cenário
+    // Arrange
     RegisterRequestDTO request = new RegisterRequestDTO();
     request.setName("Test User");
     request.setEmail("test@test.com");
@@ -54,10 +54,10 @@ class AuthServiceTest {
     when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
     when(jwtUtil.generateToken(anyString(), anyString())).thenReturn("mocked-jwt-token");
 
-    // Act - executa o que quer testar
+    // Act
     AuthResponseDTO response = authService.register(request);
 
-    // Assert - verifica o resultado
+    // Assert
     assertNotNull(response);
     assertNotNull(response.getToken());
     verify(userRepository).save(any(User.class));
@@ -82,7 +82,6 @@ class AuthServiceTest {
       authService.register(request);
     });
 
-    // Verifica que o save nunca foi chamado
     verify(userRepository, never()).save(any(User.class));
   }
 
@@ -130,7 +129,8 @@ class AuthServiceTest {
     User existingUser = new User();
     existingUser.setEmail("carlos@gmail.com");
     existingUser.setPassword("encodedPassword");
-
+ 
+    // Act + Assert
     when(userRepository.findByEmail("carlos@gmail.com"))
       .thenReturn(Optional.of(existingUser));
     when(passwordEncoder.matches("wrongpassword", "encodedPassword"))

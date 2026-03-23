@@ -14,6 +14,7 @@ import com.br.mastermind.api.dto.GuessResponseDTO;
 import com.br.mastermind.api.dto.MatchResponseDTO;
 import com.br.mastermind.api.entity.Match;
 import com.br.mastermind.api.entity.User;
+import com.br.mastermind.api.enums.MatchDifficulty;
 import com.br.mastermind.api.enums.MatchStatus;
 import com.br.mastermind.api.infra.exception.ResourceNotFoundException;
 import com.br.mastermind.api.repository.MatchRepository;
@@ -31,29 +32,46 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class GameService {
 
-  private static final List<String> COLOR_POOL = List.of("RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "PURPLE");
+  private static final List<String> COLOR_POOL_EASY = List.of(
+    "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "PURPLE"
+  );
+
+  private static final List<String> COLOR_POOL_MEDIUM = List.of(
+    "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "PURPLE", "PINK", "CYAN"
+  );
+
+  private static final List<String> COLOR_POOL_HARD = List.of(
+    "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "PURPLE", "PINK", "CYAN", "WHITE", "BROWN"
+  );
 
   private final UserRepository userRepository;
   private final MatchRepository matchRepository;
   private final ObjectMapper objectMapper;
 
-  public MatchResponseDTO startMatch(String email) {
+  public MatchResponseDTO startMatch(String email, MatchDifficulty difficulty) {
 
     // Verificar se o usuário existe
     User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     log.info(">>> INFO: Iniciando nova partida para usuário {}: {}", email, user.getName());
 
     // Gerar a combinação secreta
-    List<String> secret = new ArrayList<>(COLOR_POOL);
-
-    Collections.shuffle(secret);
-    log.info(">>> INFO: Pool de cores definidas para combinação secreta: {}", secret);
+    List<String> pool;
+    
+    switch (difficulty) {
+      case EASY   -> pool = new ArrayList<>(COLOR_POOL_EASY);
+      case MEDIUM -> pool = new ArrayList<>(COLOR_POOL_MEDIUM);
+      case HARD   -> pool = new ArrayList<>(COLOR_POOL_HARD);
+      default     -> pool = new ArrayList<>(COLOR_POOL_EASY);
+    }
 
     // Criar a partida
     Match match = new Match();
 
+    Collections.shuffle(pool);
+    log.info(">>> INFO: Pool de cores definidas para combinação secreta: {}", pool);
+
     try {
-      match.setResponseExpected(objectMapper.writeValueAsString(secret.subList(0, 4)));
+      match.setResponseExpected(objectMapper.writeValueAsString(pool.subList(0, 4)));
       log.info(">>> INFO: Combinação secreta gerada para partida: {}", match.getResponseExpected());
     } catch (JsonProcessingException e) {
       log.error(">>> ERROR: Erro ao processar a combinação secreta para partida: {}", e.getMessage());
@@ -62,11 +80,12 @@ public class GameService {
 
     match.setAttemptCount(0);
     match.setUser(user);
+    match.setDifficulty(difficulty);
 
     matchRepository.save(match);
     log.info(">>> INFO: Nova partida criada para usuário {}: {}", email, user.getName());
 
-    return new MatchResponseDTO(match.getSecretCode(), match.getStatus());
+    return new MatchResponseDTO(match.getSecretCode(), match.getDifficulty(), match.getStatus());
   }
 
   @Transactional
