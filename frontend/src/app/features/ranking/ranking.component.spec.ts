@@ -1,12 +1,13 @@
-import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { DashboardComponent } from './dashboard.component';
-import { provideRouter } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-describe('DashboardComponent', () => {
+import { RankingComponent } from './ranking.component';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+
+describe('RankingComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardComponent],
+      imports: [RankingComponent],
       providers: [
         provideHttpClient(),
         provideRouter([])
@@ -15,7 +16,7 @@ describe('DashboardComponent', () => {
   });
 
   it('should create', () => {
-    const fixture = TestBed.createComponent(DashboardComponent);
+    const fixture = TestBed.createComponent(RankingComponent);
     const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });

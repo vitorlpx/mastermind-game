@@ -13,7 +13,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   public getMatchHistory(): Observable<MatchHistory[]> {
-    return this.http.get<MatchHistory[]>(`${this.API_URL}/user/me/match-history`);
+    return this.http.get<MatchHistory[]>(`${this.API_URL}/match/history`);
   }
 
   public getProfile(): Observable<UserProfile> {

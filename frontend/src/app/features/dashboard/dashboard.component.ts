@@ -26,13 +26,15 @@ export class DashboardComponent implements OnInit {
   private rankingService = inject(RankingService);
   private router = inject(Router);
 
-  userName = '';
+  userName: string = '';
+  email: string = (this.authService.getEmail() ?? '').trim().toLowerCase();
   bestScore = 0;
   ranking: RankingResponse[] = [];
   matchHistory: MatchHistory[] = [];
 
   showStartModal = false;
   isStartingGame = false;
+  showLogoutModal = false;
 
   openStartModal() {
     this.showStartModal = true;
@@ -61,11 +63,13 @@ export class DashboardComponent implements OnInit {
     this.userService.getMatchHistory().subscribe({
       next: (history) => {
         this.matchHistory = history;
+      },
+      error: (err) => {
+        console.error('Erro ao buscar histórico de partidas:', err);
+        this.matchHistory = [];
       }
     });
   }
-
-  showLogoutModal = false;
 
   openLogoutModal() { this.showLogoutModal = true; }
   closeLogoutModal() { this.showLogoutModal = false; }
@@ -94,5 +98,9 @@ export class DashboardComponent implements OnInit {
     if (this.matchHistory.length === 0) return 0;
     const wins = this.matchHistory.filter(m => m.status === MatchStatus.WON).length;
     return Math.round((wins / this.matchHistory.length) * 100);
+  }
+
+  isCurrentUser(playerEmail: string): boolean {
+    return !!this.email && playerEmail.trim().toLowerCase() === this.email;
   }
 }

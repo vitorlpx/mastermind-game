@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { DashboardComponent } from './dashboard.component';
+import { GameComponent } from './game.component';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
-describe('DashboardComponent', () => {
+describe('LoginComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardComponent],
+      imports: [GameComponent],
       providers: [
         provideHttpClient(),
         provideRouter([])
@@ -15,7 +15,7 @@ describe('DashboardComponent', () => {
   });
 
   it('should create', () => {
-    const fixture = TestBed.createComponent(DashboardComponent);
+    const fixture = TestBed.createComponent(GameComponent);
     const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });

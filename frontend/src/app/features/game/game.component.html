@@ -1,0 +1,204 @@
+<!-- Header -->
+<header class="game-header">
+  <div class="header-brand">
+    <svg
+      class="brand-icon"
+      fill="none"
+      viewBox="0 0 48 48"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        clip-rule="evenodd"
+        d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+        fill="currentColor"
+        fill-rule="evenodd"
+      ></path>
+      <path
+        clip-rule="evenodd"
+        d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+        fill="currentColor"
+        fill-rule="evenodd"
+      ></path>
+    </svg>
+    <span class="brand-name">MASTERMIND PRO</span>
+  </div>
+  <div class="game-stats">
+    <div class="stat">
+      <span class="stat-label">SCORE</span>
+      <span class="stat-value accent-text">
+        {{ gameOver ? currentScore : potentialScore }}
+      </span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-label">ATTEMPTS</span>
+      <span class="stat-value">{{ gameOver ? currentRow : currentRow + 1 }} / 10</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-label">TIME</span>
+      <span class="stat-value">{{ formattedTime }}</span>
+    </div>
+  </div>
+  <a routerLink="/dashboard" class="btn-back">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        d="M10 19l-7-7m0 0l7-7m-7 7h18"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+      ></path>
+    </svg>
+    Dashboard
+  </a>
+</header>
+
+<main class="game-main">
+  <!-- Tabuleiro -->
+  <div class="board-wrapper">
+    <div class="board">
+      <div
+        class="board-row"
+        *ngFor="let row of board; let i = index"
+        [class.active-row]="i === currentRow && !gameOver"
+        [class.submitted-row]="row.submitted"
+      >
+        <!-- Número da tentativa -->
+        <span class="row-number">{{ i + 1 }}</span>
+
+        <!-- 4 slots de cores -->
+        <div class="color-slots">
+          <div
+            class="color-slot"
+            *ngFor="let color of row.colors; let j = index"
+            [class.filled]="color !== ''"
+            [style.background-color]="getColorHex(color)"
+            (click)="placeColor(i, j)"
+          >
+            <span *ngIf="color === ''" class="slot-empty">+</span>
+          </div>
+        </div>
+
+        <!-- Feedback de hits e nearMisses -->
+        <div class="feedback-grid" *ngIf="row.submitted">
+          <div
+            class="feedback-dot"
+            *ngFor="let dot of getFeedbackDots(row)"
+            [class.hit]="dot === 'hit'"
+            [class.near]="dot === 'near'"
+            [class.empty]="dot === 'empty'"
+          ></div>
+        </div>
+        <div class="feedback-grid feedback-pending" *ngIf="!row.submitted">
+          <div class="feedback-dot empty" *ngFor="let _ of [1, 2, 3, 4]"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel direito -->
+  <div class="game-panel">
+    <!-- Seletor de cores -->
+    <div class="color-picker glass-panel">
+      <p class="picker-label">SELECT PEG COLOR</p>
+      <div class="color-options">
+        <div
+          class="color-option"
+          *ngFor="let color of COLOR_POOL"
+          [style.background-color]="getColorHex(color)"
+          [class.selected]="selectedColor === color"
+          (click)="selectColor(color)"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Game Actions -->
+    <div class="game-actions">
+      <button
+        class="btn-remove"
+        (click)="removeLastColor()"
+        [disabled]="isRemoveDisabled()"
+      >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          ></path>
+        </svg>
+        REMOVER
+      </button>
+      <button
+        class="btn-submit"
+        (click)="submitGuess()"
+        [disabled]="isSubmitDisabled()"
+      >
+        SUBMIT GUESS
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M14 5l7 7m0 0l-7 7m7-7H3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Erro -->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+</main>
+
+<!-- Modal Game Over -->
+<div class="modal-overlay" *ngIf="gameOver">
+  <div class="modal-card">
+    <div
+      class="modal-icon"
+      [class.win-icon]="gameResult === 'WON'"
+      [class.lose-icon]="gameResult === 'LOST'"
+    >
+      <svg
+        *ngIf="gameResult === 'WON'"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        ></path>
+      </svg>
+      <svg
+        *ngIf="gameResult === 'LOST'"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        ></path>
+      </svg>
+    </div>
+    <h3>{{ gameResult === "WON" ? "Você Venceu! 🎉" : "Game Over!" }}</h3>
+    <p *ngIf="gameResult === 'WON'">
+      Pontuação final:
+      <strong class="accent-text">{{ currentScore }} pts</strong>
+    </p>
+    <p *ngIf="gameResult === 'LOST'">
+      Você usou todas as tentativas. Tente novamente!
+    </p>
+    <div class="modal-actions">
+      <a routerLink="/dashboard" class="btn-cancel">Voltar</a>
+      <a routerLink="/dashboard" class="btn-confirm">Jogar Novamente</a>
+    </div>
+  </div>
+</div>

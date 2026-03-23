@@ -122,6 +122,7 @@
 
 .accent-text {
     color: #00f2ff;
+    font-weight: 700;
     text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
 }
 
@@ -130,7 +131,7 @@
     align-items: center;
     gap: 10px;
     padding: 14px 28px;
-    background: #1c3297;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
     border: none;
     border-radius: 12px;
     color: white;
@@ -138,11 +139,10 @@
     font-size: 15px;
     cursor: pointer;
     white-space: nowrap;
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
     transition: all 0.2s;
 
     svg { width: 20px; height: 20px; }
-    &:hover { transform: scale(1.03); box-shadow: 0 0 25px rgba(0, 242, 255, 0.35); }
+    &:hover { transform: scale(1.03); box-shadow: 0 0 25px rgba(0, 242, 255, 0.273); }
 }
 
 // Stats
@@ -225,6 +225,10 @@
 
     &:hover { background: rgba(255, 255, 255, 0.03); }
     &.ranking-first { background: rgba(28, 50, 151, 0.25); }
+    &.current-user {
+        background: rgba(0, 242, 255, 0.05);
+        border-left: 3px solid #00f2ff;
+    }
 }
 
 .ranking-position {
@@ -253,8 +257,24 @@
 .ranking-first .ranking-avatar { border-color: rgba(0, 242, 255, 0.5); }
 
 .ranking-info { flex: 1; }
-.ranking-name { font-weight: 700; font-size: 14px; }
+.ranking-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 14px;
+}
 .ranking-score { font-weight: 700; font-size: 14px; }
+
+.you-badge {
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0, 242, 255, 0.15);
+    color: #00f2ff;
+    letter-spacing: 0.05em;
+}
 
 // Table
 .table-wrapper { overflow-x: auto; }
