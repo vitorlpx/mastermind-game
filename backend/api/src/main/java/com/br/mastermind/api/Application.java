@@ -11,16 +11,28 @@ public class Application {
 	public static void main(String[] args) {
 		Dotenv dotenv = Dotenv.configure()
 			.filename(".env")
+			.ignoreIfMissing()
 			.load();
 
-		System.setProperty("DB_URL", dotenv.get("DB_URL"));
-		System.setProperty("DB_NAME", dotenv.get("DB_NAME"));
-		System.setProperty("DB_USER", dotenv.get("DB_USER"));
-		System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
-		System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
-		System.setProperty("JWT_EXPIRATION", dotenv.get("JWT_EXPIRATION"));
+		setProperty("DB_URL", dotenv);
+		setProperty("DB_NAME", dotenv);
+		setProperty("DB_USER", dotenv);
+		setProperty("DB_PASSWORD", dotenv);
+		setProperty("JWT_SECRET", dotenv);
+		setProperty("JWT_EXPIRATION", dotenv);
 
 		SpringApplication.run(Application.class, args);
+	}
+
+	private static void setProperty(String key, Dotenv dotenv) {
+		// Tenta pegar do .env primeiro, senão pega do ambiente do sistema (Docker)
+		String value = dotenv.get(key);
+		if (value == null) {
+			value = System.getenv(key);
+		}
+		if (value != null) {
+			System.setProperty(key, value);
+		}
 	}
 
 }
