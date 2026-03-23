@@ -1,6 +1,7 @@
 package com.br.mastermind.api.controller;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,12 @@ public class GameController {
   public ResponseEntity<GuessResponseDTO> submitGuess(@RequestBody @Valid GuessRequestDTO guess, @PathVariable String matchId, Authentication authentication) {
     GuessResponseDTO response = gameService.submitGuess(matchId, guess);
     return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @DeleteMapping("/abandon/{matchId}")
+  public ResponseEntity<Void> abandonMatch(@PathVariable String matchId, Authentication authentication) {
+    gameService.abandonMatch(matchId, authentication.getName());
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
 }

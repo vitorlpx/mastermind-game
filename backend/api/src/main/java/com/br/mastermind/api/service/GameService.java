@@ -181,6 +181,26 @@ public class GameService {
     return new GuessResponseDTO(Arrays.asList(feedback), match.getScore(), match.getStatus());
   }
 
+  @Transactional
+  public void abandonMatch(String matchId, String email) {
+    Match match = matchRepository.findBySecretCode(UUID.fromString(matchId))
+      .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada."));
+
+    if (!match.getUser().getEmail().equals(email)) {
+      throw new ResourceNotFoundException("Partida não encontrada.");
+    }
+
+    if (!match.getStatus().equals(MatchStatus.IN_PROGRESS)) {
+      return;
+    }
+
+    match.setStatus(MatchStatus.LOST);
+    match.setFinishedAt(LocalDateTime.now());
+    
+    matchRepository.save(match);
+    log.info(">>> INFO: Partida {} abandonada pelo usuário {} e finalizada como derrota", match.getId(), email);
+  }
+
   private List<String> getColorPoolByDifficulty(MatchDifficulty difficulty) {
     if (difficulty == null) {
       return COLOR_POOL_EASY;
