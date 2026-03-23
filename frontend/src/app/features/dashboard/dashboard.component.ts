@@ -31,10 +31,11 @@ export class DashboardComponent implements OnInit {
   bestScore = 0;
   ranking: RankingResponse[] = [];
   matchHistory: MatchHistory[] = [];
+  selectedDifficulty: string = 'EASY';
 
-  showStartModal = false;
-  isStartingGame = false;
-  showLogoutModal = false;
+  showStartModal: boolean = false;
+  isStartingGame: boolean = false;
+  showLogoutModal: boolean = false;
 
   openStartModal() {
     this.showStartModal = true;
@@ -82,13 +83,13 @@ export class DashboardComponent implements OnInit {
   confirmStartGame() {
     this.isStartingGame = true;
 
-    this.gameService.startMatch().subscribe({
+    this.gameService.startMatch(this.selectedDifficulty).subscribe({
       next: (response) => {
         localStorage.setItem('matchId', response.matchId);
+        localStorage.setItem('difficulty', this.selectedDifficulty);
         this.router.navigate(['/game']);
       },
       error: () => {
-        console.error('Erro ao iniciar partida. Tente novamente.');
         this.isStartingGame = false;
       }
     });

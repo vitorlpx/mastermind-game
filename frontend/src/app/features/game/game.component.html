@@ -39,6 +39,13 @@
       <span class="stat-label">TIME</span>
       <span class="stat-value">{{ formattedTime }}</span>
     </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-label">DIFFICULTY</span>
+      <span class="stat-value" [class.accent-text]="difficulty === 'HARD'">
+        {{ difficulty === 'EASY' ? 'Easy' : difficulty === 'MEDIUM' ? 'Medium' : 'Hard' }}
+      </span>
+      </div>
   </div>
   <a routerLink="/dashboard" class="btn-back">
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,7 +61,7 @@
 </header>
 
 <main class="game-main">
-  <!-- Tabuleiro -->
+  <!-- Board -->
   <div class="board-wrapper">
     <div class="board">
       <div
@@ -63,10 +70,10 @@
         [class.active-row]="i === currentRow && !gameOver"
         [class.submitted-row]="row.submitted"
       >
-        <!-- Número da tentativa -->
+        <!-- Attempt number -->
         <span class="row-number">{{ i + 1 }}</span>
 
-        <!-- 4 slots de cores -->
+        <!-- 4 color slots -->
         <div class="color-slots">
           <div
             class="color-slot"
@@ -79,7 +86,7 @@
           </div>
         </div>
 
-        <!-- Feedback de hits e nearMisses -->
+        <!-- Hits and near-misses feedback -->
         <div class="feedback-grid" *ngIf="row.submitted">
           <div
             class="feedback-dot"
@@ -96,9 +103,9 @@
     </div>
   </div>
 
-  <!-- Painel direito -->
+  <!-- Right panel -->
   <div class="game-panel">
-    <!-- Seletor de cores -->
+    <!-- Color picker -->
     <div class="color-picker glass-panel">
       <p class="picker-label">SELECT PEG COLOR</p>
       <div class="color-options">
@@ -127,7 +134,7 @@
             stroke-width="2"
           ></path>
         </svg>
-        REMOVER
+        REMOVE
       </button>
       <button
         class="btn-submit"
@@ -146,7 +153,7 @@
       </button>
     </div>
 
-    <!-- Erro -->
+    <!-- Error -->
     <div class="error-message" *ngIf="errorMessage">
       {{ errorMessage }}
     </div>
@@ -188,17 +195,17 @@
         ></path>
       </svg>
     </div>
-    <h3>{{ gameResult === "WON" ? "Você Venceu! 🎉" : "Game Over!" }}</h3>
+    <h3>{{ gameResult === "WON" ? "You Won! 🎉" : "Game Over!" }}</h3>
     <p *ngIf="gameResult === 'WON'">
-      Pontuação final:
+      Final score:
       <strong class="accent-text">{{ currentScore }} pts</strong>
     </p>
     <p *ngIf="gameResult === 'LOST'">
-      Você usou todas as tentativas. Tente novamente!
+      You used all attempts. Try again!
     </p>
     <div class="modal-actions">
-      <a routerLink="/dashboard" class="btn-cancel">Voltar</a>
-      <a routerLink="/dashboard" class="btn-confirm">Jogar Novamente</a>
+      <a routerLink="/dashboard" class="btn-cancel">Back</a>
+      <a routerLink="/dashboard" class="btn-confirm">Play Again</a>
     </div>
   </div>
 </div>

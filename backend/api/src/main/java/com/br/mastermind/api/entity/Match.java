@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.ColumnTransformer;
 
+import com.br.mastermind.api.enums.MatchDifficulty;
 import com.br.mastermind.api.enums.MatchStatus;
 
 import jakarta.persistence.*;
@@ -47,6 +48,9 @@ public class Match {
   @Column(columnDefinition = "jsonb", nullable = false)
   @ColumnTransformer(write = "?::jsonb")
   private String responseExpected;
+
+  @Enumerated(EnumType.STRING)
+  private MatchDifficulty difficulty;
 
   private LocalDateTime startedAt;
   private LocalDateTime finishedAt;  

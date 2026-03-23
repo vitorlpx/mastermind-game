@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.mastermind.api.dto.GuessRequestDTO;
 import com.br.mastermind.api.dto.GuessResponseDTO;
 import com.br.mastermind.api.dto.MatchResponseDTO;
+import com.br.mastermind.api.dto.StartMatchRequestDTO;
 import com.br.mastermind.api.service.GameService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class GameController {
   private final GameService gameService;
 
   @PostMapping("/start")
-  public ResponseEntity<MatchResponseDTO> startMatch(Authentication authentication) {
-    MatchResponseDTO response = gameService.startMatch(authentication.getName());
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  public ResponseEntity<MatchResponseDTO> startMatch(@RequestBody StartMatchRequestDTO request, Authentication authentication) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+      .body(gameService.startMatch(authentication.getName(), request.getDifficulty()));
   }
   
   @PostMapping("/guess/{matchId}")

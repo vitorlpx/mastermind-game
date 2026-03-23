@@ -1,9 +1,6 @@
 package com.br.mastermind.api.dto;
 
-import java.util.UUID;
-
 import com.br.mastermind.api.enums.MatchDifficulty;
-import com.br.mastermind.api.enums.MatchStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,10 +11,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatchResponseDTO {
- 
-  private UUID matchId;
+public class StartMatchRequestDTO {
+  
   private MatchDifficulty difficulty;
-  private MatchStatus status;
 
 }
