@@ -10,9 +10,9 @@ export class GameService {
 
   constructor(private http: HttpClient) { }
 
-  public startMatch(): Observable<MatchResponse> {
-    return this.http.post<MatchResponse>(`${this.API_URL}/start`, {})
-  }
+  public startMatch(difficulty: string): Observable<MatchResponse> {
+    return this.http.post<MatchResponse>(`${this.API_URL}/start`, { difficulty });
+}
 
   public submitGuess(matchId: string, colors: string[]): Observable<GuessResponse> {
     return this.http.post<GuessResponse>(`${this.API_URL}/guess/${matchId}`, { colors });
