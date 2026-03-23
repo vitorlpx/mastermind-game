@@ -55,14 +55,7 @@ public class GameService {
     log.info(">>> INFO: Iniciando nova partida para usuário {}: {}", email, user.getName());
 
     // Gerar a combinação secreta
-    List<String> pool;
-    
-    switch (difficulty) {
-      case EASY   -> pool = new ArrayList<>(COLOR_POOL_EASY);
-      case MEDIUM -> pool = new ArrayList<>(COLOR_POOL_MEDIUM);
-      case HARD   -> pool = new ArrayList<>(COLOR_POOL_HARD);
-      default     -> pool = new ArrayList<>(COLOR_POOL_EASY);
-    }
+    List<String> pool = new ArrayList<>(getColorPoolByDifficulty(difficulty));
 
     // Criar a partida
     Match match = new Match();
@@ -92,7 +85,7 @@ public class GameService {
   public GuessResponseDTO submitGuess(String matchId, GuessRequestDTO guessRequest) {
 
     Match match = matchRepository.findBySecretCode(UUID.fromString(matchId))
-        .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada"));
+      .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada"));
     log.info(">>> INFO: Partida encontrada pelo ID {}: {}", matchId, match.getId());
 
     User user = match.getUser();
@@ -101,6 +94,8 @@ public class GameService {
       log.error(">>> ERROR: Partida não está em andamento: {}", match.getId());
       throw new RuntimeException("Partida não está em andamento");
     }
+
+    validateGuessColors(guessRequest, match.getDifficulty());
 
     List<String> secretCode;
     try {
@@ -184,5 +179,37 @@ public class GameService {
         match.getStatus(), match.getAttemptCount());
 
     return new GuessResponseDTO(Arrays.asList(feedback), match.getScore(), match.getStatus());
+  }
+
+  private List<String> getColorPoolByDifficulty(MatchDifficulty difficulty) {
+    if (difficulty == null) {
+      return COLOR_POOL_EASY;
+    }
+
+    return switch (difficulty) {
+      case EASY -> COLOR_POOL_EASY;
+      case MEDIUM -> COLOR_POOL_MEDIUM;
+      case HARD -> COLOR_POOL_HARD;
+    };
+  }
+
+  private void validateGuessColors(GuessRequestDTO guessRequest, MatchDifficulty difficulty) {
+    List<String> colors = guessRequest.getColors();
+
+    if (colors == null || colors.size() != 4) {
+      throw new RuntimeException("A tentativa deve conter exatamente 4 cores");
+    }
+
+    boolean hasInvalidValue = colors.stream().anyMatch(color -> color == null || color.isBlank());
+    if (hasInvalidValue) {
+      throw new RuntimeException("Todas as cores da tentativa devem ser preenchidas");
+    }
+
+    List<String> allowedPool = getColorPoolByDifficulty(difficulty);
+    boolean hasInvalidColor = colors.stream().anyMatch(color -> !allowedPool.contains(color));
+
+    if (hasInvalidColor) {
+      throw new RuntimeException("A tentativa contém cores inválidas para a dificuldade selecionada");
+    }
   }
 }

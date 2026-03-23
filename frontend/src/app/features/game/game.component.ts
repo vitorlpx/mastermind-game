@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatchStatus } from '@core/enums';
 import { BoardRow } from '@core/models/game.model';
 import { GameService } from '@core/services/game.service';
+import { getBackendErrorMessage } from '@core/utils/http-error.util';
 
 @Component({
   selector: 'app-game',
@@ -149,6 +150,9 @@ export class GameComponent implements OnInit, OnDestroy {
           clearInterval(this.timerInterval);
           localStorage.removeItem('matchId');
         }
+      },
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
       }
     });
   }
@@ -162,6 +166,35 @@ export class GameComponent implements OnInit, OnDestroy {
     const minutes = Math.floor(this.timer / 60).toString().padStart(2, '0');
     const seconds = (this.timer % 60).toString().padStart(2, '0');
     return `${minutes}:${seconds}`;
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (!this.hasInProgressMatch()) {
+      return;
+    }
+
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  canLeavePage(): boolean {
+    if (!this.hasInProgressMatch()) {
+      return true;
+    }
+
+    const shouldLeave = window.confirm('Existe uma partida em andamento. Deseja sair mesmo assim?');
+
+    if (shouldLeave) {
+      localStorage.removeItem('matchId');
+      localStorage.removeItem('difficulty');
+    }
+
+    return shouldLeave;
+  }
+
+  private hasInProgressMatch(): boolean {
+    return !!this.matchId && !this.gameOver;
   }
 
 }

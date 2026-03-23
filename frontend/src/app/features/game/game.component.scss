@@ -390,25 +390,8 @@
   margin-top: 28px;
 }
 
-.btn-cancel {
-  width: 30%;
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: $text-secondary;
-  font-weight: 700;
-  text-decoration: none;
-  text-align: center;
-  transition: all 0.2s;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-}
-
 .btn-confirm {
-  width: 70%;
+  width: 100%;
   padding: 12px;
   border-radius: 12px;
   background: $accent-gradient;
