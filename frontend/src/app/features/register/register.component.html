@@ -10,7 +10,7 @@
       </svg>
     </div>
     <h1>Mastermind Pro</h1>
-    <p>Unlock your strategic potential.</p>
+    <p>Desafie sua lógica e estratégia.</p>
   </div>
 
   <!-- Card -->
@@ -18,7 +18,7 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
       <div class="field-group">
-        <label for="name">Name</label>
+        <label for="name">Nome</label>
         <div class="input-wrapper">
           <span class="input-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,13 +56,13 @@
           />
         </div>
         <span class="error-message" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-          Email inválido.
+          E-mail inválido.
         </span>
       </div>
 
       <!-- Password -->
       <div class="field-group">
-        <label for="password">Password</label>
+        <label for="password">Senha</label>
         <div class="input-wrapper">
           <span class="input-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +78,11 @@
           />
         </div>
         <span class="error-message" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
-          A senha precisa ter no mínimo 8 caracteres.
+          <span *ngIf="form.get('password')?.errors?.['required']">Senha obrigatória.</span>
+          <br>
+          <span *ngIf="form.get('password')?.errors?.['minlength']">A senha deve ter, no mínimo, 8 caracteres.</span>
+          <br>
+          <span *ngIf="form.get('password')?.errors?.['pattern']">A senha deve conter letra maiúscula, <br>minúscula, número e caractere especial.</span>
         </span>
       </div>
 
@@ -89,7 +93,7 @@
 
       <!-- Submit -->
       <button class="btn-primary" type="submit" [disabled]="isLoading || form.invalid">
-        <span>{{ isLoading ? 'Redirecionando...' : 'Sign Up' }}</span>
+        <span>{{ isLoading ? 'Redirecionando...' : 'Criar conta' }}</span>
         <svg *ngIf="!isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
         </svg>
@@ -97,16 +101,16 @@
 
     </form>
 
-    <!-- Link cadastro -->
+    <!-- Link de login -->
     <div class="login-prompt">
-      <p>Have an account? <a routerLink="/login">Sign In</a></p>
+      <p>Já tem conta? <a routerLink="/login">Entrar</a></p>
     </div>
 
   </section>
 
   <!-- Footer -->
   <footer class="page-footer">
-    <p>© 2026 Mastermind Pro. Built for competitive minds.</p>
+    <p>© 2026 Mastermind Pro. Feito para mentes competitivas.</p>
   </footer>
 
 </main>

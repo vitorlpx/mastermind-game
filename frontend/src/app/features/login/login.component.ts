@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { getBackendErrorMessage } from '@core/utils/http-error.util';
 
 @Component({
   selector: 'app-login',
@@ -34,8 +35,8 @@ export class LoginComponent {
 
     this.authService.login(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => {
-        this.errorMessage = 'Email ou senha inválidos.';
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
         this.isLoading = false;
       }
     });

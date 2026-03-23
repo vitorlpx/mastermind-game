@@ -10,7 +10,7 @@
       </svg>
     </div>
     <h1>Mastermind Pro</h1>
-    <p>Unlock your strategic potential.</p>
+    <p>Desafie sua lógica e estratégia.</p>
   </div>
 
   <!-- Card -->
@@ -35,13 +35,13 @@
           />
         </div>
         <span class="error-message" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-          Email inválido.
+          E-mail inválido.
         </span>
       </div>
 
       <!-- Password -->
       <div class="field-group">
-        <label for="password">Password</label>
+        <label for="password">Senha</label>
         <div class="input-wrapper">
           <span class="input-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@
 
       <!-- Submit -->
       <button class="btn-primary" type="submit" [disabled]="isLoading || form.invalid">
-        <span>{{ isLoading ? 'Entrando...' : 'Sign In' }}</span>
+        <span>{{ isLoading ? 'Entrando...' : 'Entrar' }}</span>
         <svg *ngIf="!isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
         </svg>
@@ -76,18 +76,18 @@
 
     </form>
 
-    <!-- Link cadastro -->
+    <!-- Link de cadastro -->
     <div class="register-prompt">
-      <p>Don't have an account? <a routerLink="/register">Sign Up</a></p>
+      <p>Ainda não tem conta? <a routerLink="/register">Criar conta</a></p>
     </div>
 
   </section>
 
   <!-- Footer -->
   <footer class="page-footer">
-    <p>© 2026 Mastermind Pro. Built for competitive minds.</p>
+    <p>© 2026 Mastermind Pro. Feito para mentes competitivas.</p>
     <div class="footer-links">
-      <a routerLink="/about">How to Play</a>
+      <a routerLink="/about">Como jogar</a>
     </div>
   </footer>
 

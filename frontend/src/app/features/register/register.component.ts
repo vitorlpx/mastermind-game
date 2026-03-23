@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { getBackendErrorMessage } from '@core/utils/http-error.util';
 
 @Component({
   selector: 'app-register',
@@ -13,13 +14,15 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class RegisterComponent {
 
+  private readonly strongPasswordPattern = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{8,}$/;
+
   private authService = inject(AuthService);
   private router = inject(Router);
 
   form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required])
+    password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.pattern(this.strongPasswordPattern)])
   });
 
   errorMessage = '';
@@ -35,8 +38,8 @@ export class RegisterComponent {
 
     this.authService.register(name!, email!, password!).subscribe({
       next: () => this.router.navigate(['/login']),
-      error: () => {
-        this.errorMessage = 'Erro ao registrar usuário.';
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
         this.isLoading = false;
       }
     });

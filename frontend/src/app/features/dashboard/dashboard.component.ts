@@ -8,6 +8,7 @@ import { MatchHistory } from '../../core/models/user.model';
 import { UserService } from '../../core/services/user.service';
 import { CommonModule } from '@angular/common';
 import { MatchStatus } from '@core/enums';
+import { getBackendErrorMessage } from '@core/utils/http-error.util';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,14 +37,18 @@ export class DashboardComponent implements OnInit {
   showStartModal: boolean = false;
   isStartingGame: boolean = false;
   showLogoutModal: boolean = false;
+  errorMessage = '';
+  startGameErrorMessage = '';
 
   openStartModal() {
+    this.startGameErrorMessage = '';
     this.showStartModal = true;
   }
 
   closeStartModal() {
     this.showStartModal = false;
     this.isStartingGame = false;
+    this.startGameErrorMessage = '';
   }
 
   ngOnInit() {
@@ -52,12 +57,18 @@ export class DashboardComponent implements OnInit {
     this.userService.getProfile().subscribe({
       next: (profile) => {
         this.bestScore = profile.bestScore;
+      },
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
       }
     });
 
     this.rankingService.getRanking().subscribe({
       next: (ranking) => {
         this.ranking = ranking;
+      },
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
       }
     });
 
@@ -65,8 +76,8 @@ export class DashboardComponent implements OnInit {
       next: (history) => {
         this.matchHistory = history;
       },
-      error: (err) => {
-        console.error('Erro ao buscar histórico de partidas:', err);
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
         this.matchHistory = [];
       }
     });
@@ -89,7 +100,8 @@ export class DashboardComponent implements OnInit {
         localStorage.setItem('difficulty', this.selectedDifficulty);
         this.router.navigate(['/game']);
       },
-      error: () => {
+      error: (error) => {
+        this.startGameErrorMessage = getBackendErrorMessage(error);
         this.isStartingGame = false;
       }
     });

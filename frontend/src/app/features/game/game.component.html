@@ -31,19 +31,19 @@
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-label">ATTEMPTS</span>
+      <span class="stat-label">TENTATIVAS</span>
       <span class="stat-value">{{ gameOver ? currentRow : currentRow + 1 }} / 10</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-label">TIME</span>
+      <span class="stat-label">TEMPO</span>
       <span class="stat-value">{{ formattedTime }}</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-label">DIFFICULTY</span>
+      <span class="stat-label">DIFICULDADE</span>
       <span class="stat-value" [class.accent-text]="difficulty === 'HARD'">
-        {{ difficulty === 'EASY' ? 'Easy' : difficulty === 'MEDIUM' ? 'Medium' : 'Hard' }}
+        {{ difficulty === 'EASY' ? 'Fácil' : difficulty === 'MEDIUM' ? 'Médio' : 'Difícil' }}
       </span>
       </div>
   </div>
@@ -56,7 +56,7 @@
         stroke-width="2"
       ></path>
     </svg>
-    Dashboard
+    Painel
   </a>
 </header>
 
@@ -107,7 +107,7 @@
   <div class="game-panel">
     <!-- Color picker -->
     <div class="color-picker glass-panel">
-      <p class="picker-label">SELECT PEG COLOR</p>
+      <p class="picker-label">SELECIONE A COR</p>
       <div class="color-options">
         <div
           class="color-option"
@@ -134,14 +134,14 @@
             stroke-width="2"
           ></path>
         </svg>
-        REMOVE
+        REMOVER
       </button>
       <button
         class="btn-submit"
         (click)="submitGuess()"
         [disabled]="isSubmitDisabled()"
       >
-        SUBMIT GUESS
+        ENVIAR TENTATIVA
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             d="M14 5l7 7m0 0l-7 7m7-7H3"
@@ -153,7 +153,7 @@
       </button>
     </div>
 
-    <!-- Error -->
+    <!-- Erro -->
     <div class="error-message" *ngIf="errorMessage">
       {{ errorMessage }}
     </div>
@@ -195,17 +195,16 @@
         ></path>
       </svg>
     </div>
-    <h3>{{ gameResult === "WON" ? "You Won! 🎉" : "Game Over!" }}</h3>
+    <h3>{{ gameResult === "WON" ? "Você venceu! 🎉" : "Fim de jogo!" }}</h3>
     <p *ngIf="gameResult === 'WON'">
-      Final score:
+      Pontuação final:
       <strong class="accent-text">{{ currentScore }} pts</strong>
     </p>
     <p *ngIf="gameResult === 'LOST'">
-      You used all attempts. Try again!
+      Você usou todas as tentativas. Tente novamente!
     </p>
     <div class="modal-actions">
-      <a routerLink="/dashboard" class="btn-cancel">Back</a>
-      <a routerLink="/dashboard" class="btn-confirm">Play Again</a>
+      <a routerLink="/dashboard" class="btn-confirm">Voltar</a>
     </div>
   </div>
 </div>

@@ -25,29 +25,33 @@
 
   <div class="ranking-header">
     <div>
-      <h1>Global <span class="accent-text">Ranking</span></h1>
-      <p>The best players of Mastermind Pro</p>
+      <h1><span class="accent-text">Ranking</span> Global</h1>
+      <p>Os melhores jogadores do Mastermind Pro</p>
     </div>
     <a routerLink="/dashboard" class="btn-back">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path d="M10 19l-7-7m0 0l7-7m-7 7h18"
           stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
       </svg>
-      Dashboard
+      Painel
     </a>
   </div>
 
-  <!-- Lista vazia -->
-  <div class="empty-state glass-panel" *ngIf="ranking.length === 0">
-    <p>Nenhum jogador no ranking ainda. Seja o primeiro!</p>
+  <div class="empty-state glass-panel" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Estado vazio -->
+  <div class="empty-state glass-panel" *ngIf="!errorMessage && ranking.length === 0">
+    <p>Ainda não há jogadores no ranking. Seja o primeiro!</p>
   </div>
 
   <!-- Tabela de ranking -->
-  <div class="ranking-panel glass-panel" *ngIf="ranking.length > 0">
+  <div class="ranking-panel glass-panel" *ngIf="!errorMessage && ranking.length > 0">
     <div class="ranking-table-header">
       <span>#</span>
       <span>Jogador</span>
-      <span>Melhor Pontuação</span>
+      <span>Melhor pontuação</span>
     </div>
 
     <div
@@ -71,13 +75,13 @@
         <div>
           <p class="player-name">
             {{ player.name }}
-            <span class="you-badge" *ngIf="isCurrentUser(player.email)">YOU</span>
+            <span class="you-badge" *ngIf="isCurrentUser(player.email)">VOCÊ</span>
           </p>
           <p class="player-email">{{ player.email }}</p>
         </div>
       </div>
 
-      <!-- Score -->
+      <!-- Pontuação -->
       <span class="player-score" [class.accent-text]="i === 0">
         {{ player.score }} pts
       </span>
@@ -87,7 +91,7 @@
 
 </main>
 
-<!-- Modal: Logout -->
+<!-- Modal: Sair -->
 <div class="modal-overlay" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-icon logout-icon">
@@ -96,8 +100,8 @@
           stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
       </svg>
     </div>
-    <h3>Tem certeza que deseja sair?</h3>
-    <p>Sua sessão atual será encerrada e você precisará fazer login novamente.</p>
+    <h3>Tem certeza de que deseja sair?</h3>
+    <p>Sua sessão atual será encerrada e você precisará entrar novamente.</p>
     <div class="modal-actions">
       <button class="btn-cancel" (click)="closeLogoutModal()">Cancelar</button>
       <button class="btn-confirm btn-danger" (click)="confirmLogout()">Sair</button>
