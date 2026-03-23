@@ -28,7 +28,7 @@ public class AuthService {
 
     if(userRepository.findByEmail(request.getEmail()).isPresent()) {
       log.error(">>> ERROR: Tentativa de registro com email já existente: {}", request.getEmail());
-      throw new EmailAlreadyExistsException("E-mail já cadastrado");
+      throw new EmailAlreadyExistsException("E-mail já cadastrado.");
     }
 
     User user = new User();
@@ -49,7 +49,7 @@ public class AuthService {
   public AuthResponseDTO login(LoginRequestDTO request) {
 
     User user = userRepository.findByEmail(request.getEmail())
-    .orElseThrow(() -> new InvalidCredentialsException("Credenciais inválidas"));
+    .orElseThrow(() -> new InvalidCredentialsException("Credenciais inválidas."));
     log.info(">>> INFO: Tentativa de login para usuário {}: {}", request.getEmail(), user.getName());
         
     boolean isMatch = passwordEncoder.matches(request.getPassword(), user.getPassword());
@@ -57,7 +57,7 @@ public class AuthService {
 
     if(!isMatch) {
       log.error(">>> ERROR: Senha incorreta para usuário {}: {}", request.getEmail(), user.getName());
-      throw new InvalidCredentialsException("Credenciais inválidas");
+      throw new InvalidCredentialsException("Credenciais inválidas.");
     }
 
     String token = jwtUtil.generateToken(user.getName(), user.getEmail());

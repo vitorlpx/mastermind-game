@@ -33,7 +33,7 @@ public class JwtUtil {
       .compact();
       return jwt;
     } catch (Exception e) {
-      throw new RuntimeException("Error generating token", e);
+      throw new RuntimeException("Erro ao gerar token.", e);
     }
   }
 
