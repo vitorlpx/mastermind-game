@@ -18,4 +18,8 @@ export class GameService {
     return this.http.post<GuessResponse>(`${this.API_URL}/guess/${matchId}`, { colors });
   }
 
+  public abandonMatch(matchId: string): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/abandon/${matchId}`);
+  }
+
 }

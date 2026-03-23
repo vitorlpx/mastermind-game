@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatchStatus } from '@core/enums';
 import { BoardRow } from '@core/models/game.model';
 import { GameService } from '@core/services/game.service';
@@ -36,9 +36,13 @@ export class GameComponent implements OnInit, OnDestroy {
   currentScore = 0;
   errorMessage = '';
   timer = 0;
+  showExitModal = false;
+  isAbandoningMatch = false;
 
   private timerInterval: any;
   private gameService = inject(GameService);
+  private router = inject(Router);
+  private pendingNavigationUrl = '/dashboard';
 
   ngOnInit() {
     this.matchId = localStorage.getItem('matchId') || '';
@@ -178,23 +182,54 @@ export class GameComponent implements OnInit, OnDestroy {
     event.returnValue = '';
   }
 
-  canLeavePage(): boolean {
+  canLeavePage(nextUrl = '/dashboard'): boolean {
     if (!this.hasInProgressMatch()) {
       return true;
     }
 
-    const shouldLeave = window.confirm('Existe uma partida em andamento. Deseja sair mesmo assim?');
+    this.pendingNavigationUrl = nextUrl;
+    this.showExitModal = true;
+    return false;
+  }
 
-    if (shouldLeave) {
-      localStorage.removeItem('matchId');
-      localStorage.removeItem('difficulty');
+  cancelLeavePage(): void {
+    this.showExitModal = false;
+  }
+
+  confirmLeavePage(): void {
+    if (!this.matchId || this.isAbandoningMatch) {
+      return;
     }
 
-    return shouldLeave;
+    this.isAbandoningMatch = true;
+
+    this.gameService.abandonMatch(this.matchId).subscribe({
+      next: () => {
+        this.clearCurrentMatchSession();
+        this.showExitModal = false;
+        this.isAbandoningMatch = false;
+        this.router.navigateByUrl(this.pendingNavigationUrl);
+      },
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
+        this.isAbandoningMatch = false;
+      }
+    });
   }
 
   private hasInProgressMatch(): boolean {
     return !!this.matchId && !this.gameOver;
+  }
+
+  private clearCurrentMatchSession(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+
+    this.gameOver = true;
+    this.matchId = '';
+    localStorage.removeItem('matchId');
+    localStorage.removeItem('difficulty');
   }
 
 }
