@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { gameExitGuard } from './core/guards/game-exit.guard';
 
 export const routes: Routes = [
   {
@@ -27,7 +28,8 @@ export const routes: Routes = [
     path: 'game',
     loadComponent: () => import('./features/game/game.component')
       .then(m => m.GameComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    canDeactivate: [gameExitGuard]
   },
   {
     path: 'ranking',

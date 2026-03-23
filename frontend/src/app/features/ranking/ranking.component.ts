@@ -4,6 +4,7 @@ import { AuthService } from '@core/services/auth.service';
 import { RankingService } from '@core/services/ranking.service';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { getBackendErrorMessage } from '@core/utils/http-error.util';
 
 @Component({
   selector: 'app-ranking',
@@ -22,6 +23,7 @@ export class RankingComponent implements OnInit {
   userName: string = '';
   email: string = (this.authService.getEmail() ?? '').trim().toLowerCase();
   ranking: RankingResponse[] = [];
+  errorMessage = '';
 
   ngOnInit() {
     this.userName = this.authService.getName() ?? '';
@@ -29,9 +31,10 @@ export class RankingComponent implements OnInit {
     this.rankingService.getRanking().subscribe({
       next: (response) => {
         this.ranking = response;
+        this.errorMessage = '';
       },
-      error: (err) => {
-        console.error('Error fetching ranking:', err);
+      error: (error) => {
+        this.errorMessage = getBackendErrorMessage(error);
       }
     });
   }

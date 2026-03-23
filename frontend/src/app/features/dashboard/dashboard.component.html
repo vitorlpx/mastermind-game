@@ -28,8 +28,8 @@
   <!-- Welcome -->
   <div class="welcome-section">
     <div>
-      <h1>Welcome Back, <span class="accent-text">{{ userName }}</span></h1>
-      <p>Your cognitive prowess is ready for another challenge.</p>
+      <h1>Bem-vindo(a) de volta, <span class="accent-text">{{ userName }}</span></h1>
+      <p>Sua habilidade estratégica está pronta para mais um desafio.</p>
     </div>
     <button class="btn-start-game" (click)="openStartModal()">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,22 +38,26 @@
         <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
       </svg>
-      Start New Game
+      Iniciar nova partida
     </button>
+  </div>
+
+  <div class="empty-state" *ngIf="errorMessage">
+    {{ errorMessage }}
   </div>
 
   <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card">
-      <p class="stat-label">Personal Best</p>
+      <p class="stat-label">Melhor pontuação</p>
       <h3 class="stat-value">{{ bestScore }} <span class="stat-unit">pts</span></h3>
     </div>
     <div class="stat-card">
-      <p class="stat-label">Total Matches</p>
+      <p class="stat-label">Total de partidas</p>
       <h3 class="stat-value">{{ matchHistory.length }}</h3>
     </div>
     <div class="stat-card">
-      <p class="stat-label">Win Rate</p>
+      <p class="stat-label">Taxa de vitória</p>
       <h3 class="stat-value">{{ getWinRate() }} <span class="stat-unit">%</span></h3>
     </div>
   </div>
@@ -64,7 +68,7 @@
     <!-- Ranking -->
     <div class="panel">
       <div class="panel-header">
-        <a routerLink="/ranking" class="panel-link">View All</a>
+        <a routerLink="/ranking" class="panel-link">Ver todos</a>
       </div>
       <div class="ranking-list">
         <div class="ranking-item" *ngFor="let player of ranking.slice(0, 4); let i = index"
@@ -75,13 +79,13 @@
           <div class="ranking-info">
             <p class="ranking-name">
               {{ player.name }}
-              <span class="you-badge" *ngIf="isCurrentUser(player.email)">YOU</span>
+              <span class="you-badge" *ngIf="isCurrentUser(player.email)">VOCÊ</span>
             </p>
           </div>
           <span class="ranking-score" [class.accent-text]="i === 0">{{ player.score }} pts</span>
         </div>
         <div *ngIf="ranking.length === 0" class="empty-state">
-          No players in the leaderboard yet.
+          Ainda não há jogadores no ranking.
         </div>
       </div>
     </div>
@@ -89,14 +93,14 @@
     <!-- Recent Games -->
     <div class="panel panel-wide">
       <div class="panel-header">
-        <h2>Recent Games</h2>
+        <h2>Partidas recentes</h2>
       </div>
       <div class="table-wrapper">
         <table class="games-table" *ngIf="matchHistory.length > 0">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Score</th>
+              <th>Data</th>
+              <th>Pontuação</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -108,14 +112,14 @@
                 <span class="status-badge" [class.status-won]="match.status === MatchStatus.WON"
                   [class.status-lost]="match.status === MatchStatus.LOST"
                   [class.status-progress]="match.status === MatchStatus.IN_PROGRESS">
-                  {{ match.status === MatchStatus.WON ? 'Won' : match.status === MatchStatus.LOST ? 'Lost' : 'In Progress' }}
+                  {{ match.status === MatchStatus.WON ? 'Vitória' : match.status === MatchStatus.LOST ? 'Derrota' : 'Em andamento' }}
                 </span>
               </td>
             </tr>
           </tbody>
         </table>
         <div *ngIf="matchHistory.length === 0" class="empty-state">
-          No matches played yet.
+          Nenhuma partida jogada ainda.
         </div>
       </div>
     </div>
@@ -128,7 +132,7 @@
   <div class="footer-brand">
     <span class="brand-name">MASTERMIND PRO</span>
     <p>© 2026 Mastermind Pro. 
-      <br>Built for competitive minds.</p>
+      <br>Feito para mentes competitivas.</p>
   </div>
   <div class="peg-decoration" aria-hidden="true">
     <div class="peg red"></div>
@@ -137,11 +141,11 @@
     <div class="peg yellow"></div>
   </div>
   <div class="footer-links">
-    <a routerLink="/ranking">Global Leaderboard</a>
+    <a routerLink="/ranking">Ranking global</a>
   </div>
 </footer>
 
-<!-- Modal: Start Game -->
+<!-- Modal: Iniciar partida -->
 <div class="modal-overlay" *ngIf="showStartModal" (click)="closeStartModal()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-icon">
@@ -152,42 +156,44 @@
           stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
       </svg>
     </div>
-    <h3>Choose Difficulty</h3>
-    <p>Select a level before starting the match.</p>
+    <h3>Escolha a dificuldade</h3>
+    <p>Selecione um nível antes de iniciar a partida.</p>
 
     <!-- Difficulty selector -->
     <div class="difficulty-options">
       <button class="difficulty-btn"
         [class.selected]="selectedDifficulty === 'EASY'"
         (click)="selectedDifficulty = 'EASY'">
-        <span class="difficulty-label">Easy</span>
-        <span class="difficulty-desc">6 colors available</span>
+        <span class="difficulty-label">Fácil</span>
+        <span class="difficulty-desc">6 cores disponíveis</span>
       </button>
       <button class="difficulty-btn"
         [class.selected]="selectedDifficulty === 'MEDIUM'"
         (click)="selectedDifficulty = 'MEDIUM'">
-        <span class="difficulty-label">Medium</span>
-        <span class="difficulty-desc">8 colors available</span>
+        <span class="difficulty-label">Médio</span>
+        <span class="difficulty-desc">8 cores disponíveis</span>
       </button>
       <button class="difficulty-btn"
         [class.selected]="selectedDifficulty === 'HARD'"
         (click)="selectedDifficulty = 'HARD'">
-        <span class="difficulty-label">Hard</span>
-        <span class="difficulty-desc">10 colors available</span>
+        <span class="difficulty-label">Difícil</span>
+        <span class="difficulty-desc">10 cores disponíveis</span>
       </button>
     </div>
 
+    <p class="error-message" *ngIf="startGameErrorMessage">{{ startGameErrorMessage }}</p>
+
     <div class="modal-actions">
-      <button class="btn-cancel" (click)="closeStartModal()">Cancel</button>
+      <button class="btn-cancel" (click)="closeStartModal()">Cancelar</button>
       <button class="btn-confirm" (click)="confirmStartGame()"
         [disabled]="isStartingGame || !selectedDifficulty">
-        {{ isStartingGame ? 'Starting...' : 'Play' }}
+        {{ isStartingGame ? 'Iniciando...' : 'Jogar' }}
       </button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Logout -->
+<!-- Modal: Sair -->
 <div class="modal-overlay" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-icon logout-icon">
@@ -196,11 +202,11 @@
           stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
       </svg>
     </div>
-    <h3>Are you sure you want to sign out?</h3>
-    <p>Your current session will end and you will need to sign in again.</p>
+    <h3>Tem certeza de que deseja sair?</h3>
+    <p>Sua sessão atual será encerrada e você precisará entrar novamente.</p>
     <div class="modal-actions">
-      <button class="btn-cancel" (click)="closeLogoutModal()">Cancel</button>
-      <button class="btn-confirm btn-danger" (click)="confirmLogout()">Sign Out</button>
+      <button class="btn-cancel" (click)="closeLogoutModal()">Cancelar</button>
+      <button class="btn-confirm btn-danger" (click)="confirmLogout()">Sair</button>
     </div>
   </div>
 </div>

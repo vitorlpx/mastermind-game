@@ -15,6 +15,7 @@ import com.br.mastermind.api.dto.MatchResponseDTO;
 import com.br.mastermind.api.dto.StartMatchRequestDTO;
 import com.br.mastermind.api.service.GameService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,7 +32,7 @@ public class GameController {
   }
   
   @PostMapping("/guess/{matchId}")
-  public ResponseEntity<GuessResponseDTO> submitGuess(@RequestBody GuessRequestDTO guess, @PathVariable String matchId, Authentication authentication) {
+  public ResponseEntity<GuessResponseDTO> submitGuess(@RequestBody @Valid GuessRequestDTO guess, @PathVariable String matchId, Authentication authentication) {
     GuessResponseDTO response = gameService.submitGuess(matchId, guess);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
