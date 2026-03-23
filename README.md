@@ -218,6 +218,7 @@ http://localhost:8080/swagger-ui/index.html
 | POST | `/api/auth/login` | Login e geração de token | ❌ |
 | POST | `/api/game/start` | Inicia nova partida | ✅ |
 | POST | `/api/game/guess/{matchId}` | Submete uma tentativa | ✅ |
+| DELETE | `/api/game/abandon/{matchId}` | Abandona partida em andamento | ✅ |
 | GET | `/api/ranking` | Lista ranking global | ✅ |
 | GET | `/api/user/me` | Perfil do usuário logado | ✅ |
 | GET | `/api/match/history` | Histórico de partidas | ✅ |
