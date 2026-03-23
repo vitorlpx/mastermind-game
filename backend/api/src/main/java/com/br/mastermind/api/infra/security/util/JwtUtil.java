@@ -1,4 +1,4 @@
-package com.br.mastermind.api.infra.security.config;
+package com.br.mastermind.api.infra.security.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class JwtUtil {
       .compact();
       return jwt;
     } catch (Exception e) {
-      throw new RuntimeException("Error generating token", e);
+      throw new RuntimeException("Erro ao gerar token.", e);
     }
   }
 

@@ -19,6 +19,11 @@
     );
 }
 
+.login-wrapper {
+  width: min(100%, 460px);
+  padding: 32px 20px;
+}
+
 .glass-panel {
   background: $bg-card;
   backdrop-filter: $glass-blur;
@@ -249,5 +254,57 @@
       background: #eab308;
       box-shadow: 0 0 10px #eab308;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    align-items: flex-start;
+  }
+
+  .login-wrapper {
+    width: 100%;
+    padding: 28px 16px 20px;
+  }
+
+  .brand-header {
+    margin-bottom: 28px;
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  .login-card {
+    padding: 24px 18px;
+    border-radius: 18px;
+  }
+
+  .page-footer {
+    margin-top: 24px;
+  }
+
+  .peg-decoration {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 20px 12px 16px;
+  }
+
+  .logo-container {
+    width: 56px;
+    height: 56px;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .login-card {
+    padding: 20px 14px;
   }
 }

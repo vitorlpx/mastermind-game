@@ -68,7 +68,7 @@ public class GameService {
       log.info(">>> INFO: Combinação secreta gerada para partida: {}", match.getResponseExpected());
     } catch (JsonProcessingException e) {
       log.error(">>> ERROR: Erro ao processar a combinação secreta para partida: {}", e.getMessage());
-      throw new RuntimeException("Erro ao processar a combinação secreta");
+      throw new RuntimeException("Erro ao processar a combinação secreta.");
     }
 
     match.setAttemptCount(0);
@@ -92,7 +92,7 @@ public class GameService {
 
     if (!match.getStatus().equals(MatchStatus.IN_PROGRESS)) {
       log.error(">>> ERROR: Partida não está em andamento: {}", match.getId());
-      throw new RuntimeException("Partida não está em andamento");
+      throw new RuntimeException("Partida não está em andamento.");
     }
 
     validateGuessColors(guessRequest, match.getDifficulty());
@@ -104,7 +104,7 @@ public class GameService {
           new TypeReference<List<String>>() {
           });
     } catch (JsonProcessingException e) {
-      throw new RuntimeException("Erro ao processar a combinação secreta");
+      throw new RuntimeException("Erro ao processar a combinação secreta.");
     }
     log.info(">>> INFO: Combinação secreta recuperada para partida {}: {}", match.getId(), secretCode);
 
@@ -121,7 +121,7 @@ public class GameService {
       log.info(">>> INFO: Tentativas atualizadas para partida {}: {}", match.getId(), match.getAttempts());
     } catch (JsonProcessingException e) {
       log.error(">>> ERROR: Erro ao atualizar tentativas para partida {}: {}", match.getId(), e.getMessage());
-      throw new RuntimeException("Erro ao atualizar tentativas");
+      throw new RuntimeException("Erro ao atualizar tentativas.");
     }
 
     String[] feedback = new String[4];
@@ -181,6 +181,26 @@ public class GameService {
     return new GuessResponseDTO(Arrays.asList(feedback), match.getScore(), match.getStatus());
   }
 
+  @Transactional
+  public void abandonMatch(String matchId, String email) {
+    Match match = matchRepository.findBySecretCode(UUID.fromString(matchId))
+      .orElseThrow(() -> new ResourceNotFoundException("Partida não encontrada."));
+
+    if (!match.getUser().getEmail().equals(email)) {
+      throw new ResourceNotFoundException("Partida não encontrada.");
+    }
+
+    if (!match.getStatus().equals(MatchStatus.IN_PROGRESS)) {
+      return;
+    }
+
+    match.setStatus(MatchStatus.LOST);
+    match.setFinishedAt(LocalDateTime.now());
+    
+    matchRepository.save(match);
+    log.info(">>> INFO: Partida {} abandonada pelo usuário {} e finalizada como derrota", match.getId(), email);
+  }
+
   private List<String> getColorPoolByDifficulty(MatchDifficulty difficulty) {
     if (difficulty == null) {
       return COLOR_POOL_EASY;
@@ -197,19 +217,19 @@ public class GameService {
     List<String> colors = guessRequest.getColors();
 
     if (colors == null || colors.size() != 4) {
-      throw new RuntimeException("A tentativa deve conter exatamente 4 cores");
+      throw new RuntimeException("A tentativa deve conter exatamente 4 cores!");
     }
 
     boolean hasInvalidValue = colors.stream().anyMatch(color -> color == null || color.isBlank());
     if (hasInvalidValue) {
-      throw new RuntimeException("Todas as cores da tentativa devem ser preenchidas");
+      throw new RuntimeException("Todas as cores da tentativa devem ser preenchidas!");
     }
 
     List<String> allowedPool = getColorPoolByDifficulty(difficulty);
     boolean hasInvalidColor = colors.stream().anyMatch(color -> !allowedPool.contains(color));
 
     if (hasInvalidColor) {
-      throw new RuntimeException("A tentativa contém cores inválidas para a dificuldade selecionada");
+      throw new RuntimeException("A tentativa contém cores inválidas para a dificuldade selecionada!");
     }
   }
 }
