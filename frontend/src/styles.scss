@@ -9,9 +9,30 @@
 }
 
 body {
-  overflow: hidden;
-  height: 100vh;
   font-family: "Inter", sans-serif;
   background-color: $bg-primary;
   color: $text-primary;
+  height: 100vh;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(28, 50, 151, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 242, 255, 0.3);
+    border-radius: 999px;
+
+    &:hover {
+      background: rgba(0, 242, 255, 0.6);
+    }
+  }
+
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 242, 255, 0.3) rgba(28, 50, 151, 0.1);
 }
