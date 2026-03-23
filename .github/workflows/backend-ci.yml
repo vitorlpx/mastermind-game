@@ -29,6 +29,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+
+    - name: Give permission
+      run: chmod +x backend/mvnw
+      
     - name: Build with Maven
       working-directory: ./backend/api
       run: ./mvnw package -DskipTests
