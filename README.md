@@ -78,25 +78,18 @@ Este projeto usa dois arquivos `.env`:
 - `.env` na raiz:
   arquivo lido pelo `docker compose`, usado para injetar variáveis nos containers (backend e banco).
 - `backend/api/.env`:
-  arquivo usado somente quando o backend é executado localmente fora do Docker (via Spring Boot + dotenv).
+  arquivo também lido no ambiente Docker atual (via `env_file` do serviço `db` no `docker-compose.yml`) e usado no backend local fora do Docker.
 
-Em resumo: se rodar tudo com Docker, o arquivo essencial é o `.env` da raiz. O `.env` de `backend/api` existe para facilitar execução local do backend durante desenvolvimento.
+Em resumo: na configuração atual do projeto, para rodar tudo com Docker os dois arquivos precisam existir.
 
 **Para rodar com Docker (obrigatório):**
 ```bash
 cp .env.example .env
-```
-
-```powershell
-Copy-Item .env.example .env
-```
-
-**Para rodar o backend localmente (opcional):**
-```bash
 cp backend/api/.env.example backend/api/.env
 ```
 
 ```powershell
+Copy-Item .env.example .env
 Copy-Item backend/api/.env.example backend/api/.env
 ```
 
@@ -111,9 +104,9 @@ JWT_SECRET=sua_chave_secreta_com_no_minimo_32_caracteres
 JWT_EXPIRATION=3600000
 ```
 
-Conteúdo esperado em `backend/api/.env` (somente se for rodar backend fora do Docker):
+Conteúdo esperado em `backend/api/.env` (necessário no Docker atual e também no backend local):
 ```dotenv
-DB_URL=jdbc:postgresql://localhost:5432/mastermind_db
+DB_URL=jdbc:postgresql://localhost:5433/mastermind_db
 DB_NAME=mastermind_db
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
@@ -146,33 +139,48 @@ mastermind-frontend | ready
 ---
 
 ## 🗂️ Estrutura do Projeto
-```
 mastermind-game/
 ├── backend/
-│   └── api/                    # Spring Boot
+│   └── api/
 │       ├── src/
-│       │   ├── main/java/
-│       │   │   ├── controller/
-│       │   │   ├── service/
-│       │   │   ├── repository/
-│       │   │   ├── model/
-│       │   │   ├── dto/
-│       │   │   ├── exception/
-│       │   │   └── config/
-│       │   └── test/
+│       │   ├── main/java/com/br/mastermind/api/
+│       │   │   ├── controller/        # Endpoints REST
+│       │   │   ├── dto/               # Objetos de entrada e saída da API
+│       │   │   ├── entity/            # Entidades JPA (User, Match)
+│       │   │   ├── enums/             # Enumerações (MatchStatus, MatchDifficulty)
+│       │   │   ├── infra/
+│       │   │   │   ├── exception/     # Exceções customizadas e handler global
+│       │   │   │   ├── security/
+│       │   │   │   │   ├── config/    # SecurityConfig, CorsConfig
+│       │   │   │   │   ├── filter/    # JwtFilter
+│       │   │   │   │   └── util/      # JwtUtil
+│       │   │   │   └── springdoc/     # SwaggerConfig
+│       │   │   ├── repository/        # Interfaces JPA (acesso ao banco)
+│       │   │   └── service/           # Regras de negócio
+│       │   └── test/                  # Testes unitários (JUnit 5 + Mockito)
 │       ├── Dockerfile
 │       ├── .env.example
-│       └── .env                # não versionado
-├── frontend/                   # Angular 18
-│   ├── src/app/
-│   │   ├── core/               # services, guards, interceptors, models
-│   │   ├── features/           # login, register, dashboard, game, ranking, about
-│   │   └── shared/             # componentes reutilizáveis
-│   ├── Dockerfile
-│   └── nginx.conf
+│       └── .env                       # não versionado
+│
+├── frontend/
+│   └── src/
+│       └── app/
+│           ├── core/
+│           │   ├── guards/            # Proteção de rotas autenticadas
+│           │   ├── interceptors/      # Interceptor de token JWT
+│           │   ├── models/            # Interfaces TypeScript
+│           │   └── services/          # Comunicação com a API
+│           └── features/
+│               ├── about/             # Tela "Como Jogar"
+│               ├── dashboard/         # Tela inicial pós-login
+│               ├── game/              # Tabuleiro do jogo
+│               ├── login/             # Tela de login
+│               ├── register/          # Tela de cadastro
+│               └── ranking/           # Tela de ranking global
+│
 ├── docker-compose.yml
 ├── .env.example
-├── .env                        # não versionado
+├── .env                               # não versionado
 └── README.md
 ```
 

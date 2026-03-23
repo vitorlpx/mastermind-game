@@ -1,4 +1,4 @@
-package com.br.mastermind.api.infra.security.config;
+package com.br.mastermind.api.infra.security.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -11,6 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.br.mastermind.api.infra.security.filter.JwtFilter;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration

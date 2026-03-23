@@ -9,7 +9,7 @@ import com.br.mastermind.api.dto.RegisterRequestDTO;
 import com.br.mastermind.api.entity.User;
 import com.br.mastermind.api.infra.exception.EmailAlreadyExistsException;
 import com.br.mastermind.api.infra.exception.InvalidCredentialsException;
-import com.br.mastermind.api.infra.security.config.JwtUtil;
+import com.br.mastermind.api.infra.security.util.JwtUtil;
 import com.br.mastermind.api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;

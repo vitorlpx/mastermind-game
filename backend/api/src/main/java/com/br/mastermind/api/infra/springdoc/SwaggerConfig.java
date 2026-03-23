@@ -1,4 +1,4 @@
-package com.br.mastermind.api.infra.security.config;
+package com.br.mastermind.api.infra.springdoc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

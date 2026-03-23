@@ -1,4 +1,4 @@
-package com.br.mastermind.api.infra.security.config;
+package com.br.mastermind.api.infra.security.filter;
 
 import java.util.List;
 
@@ -6,6 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.br.mastermind.api.infra.security.util.JwtUtil;
 
 import java.io.IOException;
 import jakarta.servlet.FilterChain;
