@@ -191,13 +191,15 @@ mastermind-game/
 
 | Variável | Descrição |
 |---|---|
+| `DB_URL` | URL de conexão do banco (usada no backend local fora do Docker) |
 | `DB_NAME` | Nome do banco de dados |
 | `DB_USER` | Usuário do banco |
 | `DB_PASSWORD` | Senha do banco |
 | `JWT_SECRET` | Chave secreta para assinatura do JWT (mín. 32 chars) |
 | `JWT_EXPIRATION` | Tempo de expiração do token em ms (`3600000` = 1h) |
 
-> O `DB_URL` é montado automaticamente pelo `docker-compose.yml` e não precisa ser definido manualmente ao usar Docker.
+> No Docker, o backend recebe `DB_URL` automaticamente via `docker-compose.yml` (host interno `db:5432`).
+> O valor com `localhost:5433` é usado para rodar o backend localmente fora do container.
 
 ---
 
