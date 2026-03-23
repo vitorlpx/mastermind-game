@@ -139,6 +139,7 @@ mastermind-frontend | ready
 ---
 
 ## 🗂️ Estrutura do Projeto
+```
 mastermind-game/
 ├── backend/
 │   └── api/
